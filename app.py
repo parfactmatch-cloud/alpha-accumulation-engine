@@ -12,7 +12,7 @@ from agents import (
     fetch_live_news_agent
 )
 
-st.set_page_config(page_title="ALPHA AI QUANT TERMINAL", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ALPHA QUANT TERMINAL", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown(
     """
@@ -36,20 +36,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; MODULAR AI RENDER ENGINE</span> | PIE CHART VISUAL ALLOCATION | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; SWARM ADVANCED ENGINE ACTIVATED</span> | STRUCTURAL PIE INTEGRATION | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
 st.title("🎛️ ALPHA MULTI-AGENT SWARM TERMINAL")
 st.caption("AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL")
 
 # ==============================================================================
-# SIDEBAR CONTROL CONFIGURATION MAP
+# CLEAN SIDEBAR PANEL CONTROL
 # ==============================================================================
-st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>🔑 GEMINI AI PRO KEYWAY</h3>", unsafe_allow_html=True)
-GEMINI_API_KEY = st.sidebar.text_input("Paste API Key Panel", type="password", key="master_gemini_key_box")
-
 st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>🎯 MANUAL STOCK SEARCH</h3>", unsafe_allow_html=True)
 MANUAL_INPUT = st.sidebar.text_input("Add Custom Ticker", "", key="master_ticker_search_box").strip().upper()
 
-st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>⚙️ STRATEGY GATE RULES</h3>", unsafe_allow_html=True)
+st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>⚙ arrow_drop_down STRATEGY REGIME RULES</h3>", unsafe_allow_html=True)
 MIN_MARKET_CAP_CR = st.sidebar.number_input("MIN MCAP GATE (CR)", value=1000, key="mcap_num_gate")
 MAX_IPO_AGE_YEARS = st.sidebar.slider("MAX IPO AGE WINDOW", 1, 10, 7, key="ipo_age_slider")
 TARGET_ABSORPTION_PCT = st.sidebar.slider("TARGET FLOAT CHURN (%)", 10, 100, 30, key="churn_slider")
@@ -60,7 +57,6 @@ if MANUAL_INPUT:
     formatted_manual = MANUAL_INPUT if MANUAL_INPUT.endswith(".NS") else f"{MANUAL_INPUT}.NS"
     if formatted_manual not in BASE_UNIVERSE: BASE_UNIVERSE.insert(0, formatted_manual)
 
-# NEW: Custom matplotlib execution layout to build accurate asset share breakdown figures
 def render_equity_pie_chart(target_data):
     try:
         float_s = float(target_data.get("FloatShares", 35))
@@ -80,7 +76,6 @@ def render_equity_pie_chart(target_data):
             startangle=140, colors=colors,
             textprops=dict(color="#d1d4dc", fontfamily='monospace', fontsize=9)
         )
-        
         for autotext in autotexts:
             autotext.set_color('#0b0c10')
             autotext.set_weight('bold')
@@ -88,7 +83,7 @@ def render_equity_pie_chart(target_data):
         ax.axis('equal')
         st.pyplot(fig)
     except:
-        st.warning("📊 Unable to model specific equity pie dimensions for this asset currently.")
+        st.error("📊 System failed mapping structural float boundaries.")
 
 tab1, tab2, tab3 = st.tabs(["[ MODE 1: IPO CORE ]", "[ MODE 2: VALUE OWNER ]", "[ MODE 3: INTRADAY VCP ]"])
 
@@ -113,8 +108,8 @@ with tab1:
                 st.markdown("### 📊 Asset Equity Structure Breakdown:")
                 render_equity_pie_chart(target)
             with c2:
-                st.markdown(f"### 🤖 Live AI Pro Forecast Matrix ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "IPO Consolidation Parameters Scan", GEMINI_API_KEY))
+                st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
+                st.markdown(run_ai_cognitive_agent(target, "IPO Consolidation Dynamic Matrix Strategy"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'IPO')}")
 
@@ -139,8 +134,8 @@ with tab2:
                 st.markdown("### 📊 Asset Equity Structure Breakdown:")
                 render_equity_pie_chart(target)
             with c2:
-                st.markdown(f"### 🤖 Live AI Pro Forecast Matrix ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "Long-Term Value Moats Optimization", GEMINI_API_KEY))
+                st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
+                st.markdown(run_ai_cognitive_agent(target, "Long-Term Value Moats Structuring"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'VALUE')}")
 
@@ -165,8 +160,8 @@ with tab3:
                 st.markdown("### 📊 Asset Equity Structure Breakdown:")
                 render_equity_pie_chart(target)
             with c2:
-                st.markdown(f"### 🤖 Live AI Pro Forecast Matrix ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "Intraday Multi-Wave VCP Bottlenecks", GEMINI_API_KEY))
+                st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
+                st.markdown(run_ai_cognitive_agent(target, "Intraday Volatility Bottleneck Exhaustion Sequence"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'VCP')}")
-
+        
