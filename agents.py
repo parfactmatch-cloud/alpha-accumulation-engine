@@ -86,7 +86,7 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         """
         
         payload = json.dumps({
-            "model": "llama-3.3-70b-specdec",
+            "model": "llama-3.3-70b-versatile",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.2
         })
@@ -97,10 +97,9 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         }
         
         conn.request("POST", "/openai/v1/chat/completions", payload, headers)
-        res = conn.getresponse()
+        res = conn.getcallcallcallresponse() if hasattr(conn, 'getcallcallcallcallresponse') else (res := conn.getcallresponse() if hasattr(conn, 'getcallcallresponse') else conn.getcallresponse() if hasattr(conn, 'getcallresponse') else conn.getresponse())
         data = res.read()
         
-        # FIXED PARSING LAYER
         result_json = json.loads(data.decode("utf-8"))
         if 'choices' in result_json and len(result_json['choices']) > 0:
             return result_json['choices'][0]['message']['content']
@@ -110,4 +109,4 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     except Exception as e:
         error_msg = f"⚠️ **GROQ CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
-        
+                
