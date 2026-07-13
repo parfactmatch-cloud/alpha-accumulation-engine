@@ -3,14 +3,13 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import yfinance as yf
 import streamlit as st
-# Reverted to standard stable library import path
 import google.generativeai as genai
 
-# Pulling the key securely from the Streamlit Cloud Secrets management matrix
+# SECURE ENVIROMENT FETCHING BINDING (SAFE FOR PUBLIC GITHUB REPOS)
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
-    st.sidebar.error("❌ AI Status: Secrets Key Not Found / Broken Setup")
+    st.sidebar.error("❌ AI Status: Secrets Key Not Found / TOML Syntax Error")
 else:
     st.sidebar.success("⚡ AI Status: Gemini Swarm Engine Fully Connected")
 
@@ -43,7 +42,6 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     live_news_context = fetch_live_news_agent(stock_data['Symbol'], context_tag)
     screener_reference_url = f"https://www.screener.in/company/{ticker_name}/"
     
-    # 1. PURE MATHEMATICAL DYNAMIC REVERTS (FALLBACK COGNITION IF PIPELINE DROPS)
     if "ROCE %" in stock_data:
         fallback_analysis = (
             f"📊 **[INSTITUTIONAL EQUITY AUDIT DESK // ASSET: {ticker_name}]**\n\n"
@@ -60,14 +58,13 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     else:
         fallback_analysis = (
             f"📊 **[VOLATILITY CONTRACTION COMPLIANCE REGIME // ASSET: {ticker_name}]**\n\n"
-            f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Ceiling Res')}**."
+            f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Live Price')}**."
         )
 
     if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
         
     try:
-        # Standard configuration format for standard key architectures
         genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-1.5-pro')
         
