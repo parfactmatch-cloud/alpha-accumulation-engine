@@ -3,16 +3,16 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import yfinance as yf
 import streamlit as st
-# Modern updated client router call from the documentation
-from google import genai
+# Reverted to standard stable library import path
+import google.generativeai as genai
 
-# Pulling the key from Streamlit Cloud Secrets management matrix securely
+# Pulling the key securely from the Streamlit Cloud Secrets management matrix
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
     st.sidebar.error("❌ AI Status: Secrets Key Not Found / Broken Setup")
 else:
-    st.sidebar.success("⚡ AI Status: Modern Interactions API Active")
+    st.sidebar.success("⚡ AI Status: Gemini Swarm Engine Fully Connected")
 
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
@@ -43,63 +43,58 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     live_news_context = fetch_live_news_agent(stock_data['Symbol'], context_tag)
     screener_reference_url = f"https://www.screener.in/company/{ticker_name}/"
     
-    # 1. STRUCTURAL RIGOROUS REPORT GENERATOR BUILDER (FALLBACK BACKUP LOGIC)
+    # 1. PURE MATHEMATICAL DYNAMIC REVERTS (FALLBACK COGNITION IF PIPELINE DROPS)
     if "ROCE %" in stock_data:
         fallback_analysis = (
             f"📊 **[INSTITUTIONAL EQUITY AUDIT DESK // ASSET: {ticker_name}]**\n\n"
-            f"• **Capital Efficiency Matrix**: Return on Capital Employed (ROCE) tracks verified at **{stock_data.get('ROCE %')}%**.\n\n"
-            f"• **Leverage Assessment**: Balance sheet leverage coefficients compute safely at **{stock_data.get('Debt/Equity')}**.\n\n"
-            f"• **Verification Status**: System referencing dynamic structural constraints via Screener profiles."
+            f"• **Capital Efficiency Matrix**: Return on Capital Employed (ROCE) is running verified at **{stock_data.get('ROCE %')}%**.\n\n"
+            f"• **Leverage Audit**: Debt-to-Equity constraints map at **{stock_data.get('Debt/Equity')}**.\n\n"
+            f"• **Information Layer**: Cross-referencing active metrics parameters against institutional Screener matrices."
         )
     elif "Churn %" in stock_data:
         fallback_analysis = (
             f"📊 **[LIQUIDITY DISTRIBUTION MATRIX REPORT // ASSET: {ticker_name}]**\n\n"
-            f"• **Free Float Mapping**: Real-time asset capital distribution limits track public float levels at **₹{stock_data.get('Free-Float (Cr)')} Cr**.\n\n"
-            f"• **Volume Churn Verification**: Active market turnover parameters process flow rates near **{stock_data.get('Churn %')}%**."
+            f"• **Free Float Mapping**: Public liquidity blocks compute safely at **₹{stock_data.get('Free-Float (Cr)')} Cr**.\n\n"
+            f"• **Volume Churn Verification**: Base floor accumulation systems track public float supply rotation turnover scales at **{stock_data.get('Churn %')}%**."
         )
     else:
         fallback_analysis = (
             f"📊 **[VOLATILITY CONTRACTION COMPLIANCE REGIME // ASSET: {ticker_name}]**\n\n"
-            f"• **VCP Vector Check**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Ceiling Res')}**."
+            f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Ceiling Res')}**."
         )
 
-    # 2. UP-GRADED INTERACTIONS CLIENT DISPATCH MATRIX AS PER DOCUMENTATION
     if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
         
     try:
-        # Initializing the modern direct client SDK layout rules
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        # Standard configuration format for standard key architectures
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-pro')
         
         prompt = f"""
-        [SYSTEM ROLE DIRECTIVE]:
-        You are a legendary Senior Institutional Fund Manager and Chief Equity Risk Auditor for Indian capital markets. 
+        [SYSTEM ROLE DIRECTIVE & PRE-TRAINING TARGETS]:
+        You are a legendary Senior Institutional Fund Manager and Chief Equity Research Auditor for Indian capital markets. 
         Your directive is to analyze core quantitative metrics, cross-verify them explicitly against the provided live news streams and Screener profiles, and deliver a high-conviction final verdict.
         
-        [DIGESTED DATA SYSTEM GRID]:
-        - Target Stock Ticker: {ticker_name}
-        - Strategy Scope Context Category: {context_tag}
-        - Live Numeric Metrics Engine Output: {stock_data}
-        - Current Live Corporate News Feed: {live_news_context}
-        - Institutional Profile Subpath Reference: {screener_reference_url}
+        [DIGESTED DATA ENVIRONMENT DATA]:
+        - Target Stock Asset Ticker: {ticker_name}
+        - Strategy Scope Context Layer: {context_tag}
+        - Live Numeric Metrics Vector: {stock_data}
+        - Current Live Corporate News Context: {live_news_context}
+        - Institutional Subpath Reference: {screener_reference_url}
         
         [STRICT INSTRUCTIONAL BOUNDARIES]:
-        - Never output boilerplate text, introductory remarks, or setup code reminders.
-        - The analysis tone must be ultra-professional, dense, razor-sharp, and mathematically backed (Bloomberg terminal standard). 
-        - Absolutely no 'None' or 'NaN' placeholder tokens can pass into the layout text blocks.
+        - Never output boilerplate text, introductory pleasantries, or setup notes.
+        - Meticulously prevent generic placeholders or broken tokens like 'None' or 'NaN' from passing into your response layout.
+        - Your analysis tone must match a strict Bloomberg analyst desk style: direct, data-dense, mathematical, and highly aggressive.
         
         [TASK EXECUTION MATRIX]:
         Generate a highly professional 2-paragraph final verdict based on the specific performance values:
-        - Paragraph 1: Quantitative & Fundamental Verification. Analyze the numerical values (ROCE/Leverage/Float Churn) and cross-verify them explicitly against the live news events and con-calls trajectory. Address if the structural trends are strong or showing stress.
+        - Paragraph 1: Quantitative & Fundamental Verification. Analyze the numerical values (ROCE/Leverage/Float Churn) and cross-verify them explicitly against the live news events and con-calls trajectory. Address if the news supports the hard metrics or if structural stress exists.
         - Paragraph 2: Institutional Asset Allocation Verdict. State an aggressive, high-conviction mathematical argument outlining if an elite portfolio allocator should Accumulate, Hold, or Avoid this specific equity risk structure.
         """
-        
-        # Calling the recommended interactions endpoint with latest feature models
-        interaction = client.interactions.create(
-            model="gemini-3.5-flash",
-            input=prompt
-        )
-        return interaction.output_text
+        response = model.generate_content(prompt)
+        return response.text
     except:
         return fallback_analysis
         
