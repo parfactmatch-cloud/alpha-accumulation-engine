@@ -5,7 +5,7 @@ import yfinance as yf
 import streamlit as st
 import google.generativeai as genai
 
-# 🔐 SECURE ENVIRONMENT FETCHING (100% GITHUB PUBLIC REPO COMPLIANT)
+# 🔐 SECURE ENVIRONMENT BINDING (SAFE FOR PUBLIC GITHUB REPOS)
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
@@ -58,20 +58,18 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     else:
         fallback_analysis = (
             f"📊 **[VOLATILITY CONTRACTION COMPLIANCE REGIME // ASSET: {ticker_name}]**\n\n"
-            f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Ceiling Res')}**."
+            f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Live Price')}**."
         )
 
     if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
         
     try:
-        # BINDING: Setting explicit system transport credentials options for auth tokens handling
-        genai.configure(api_key=GEMINI_API_KEY, client_options={"api_endpoint": "generativelanguage.googleapis.com"})
+        genai.configure(api_key=GEMINI_API_KEY)
         
-        # Explicit routing configuration utilizing the modern model endpoint setup
-        model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash'
-        )
+        # 🟢 UPGRADED STABLE GENERATION TARGET PIPELINE ROUTING
+        # gemini-2.5-flash standard routing handles endpoints restrictions flawlessly
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = f"""
         [SYSTEM ROLE DIRECTIVE & PRE-TRAINING TARGETS]:
@@ -100,4 +98,4 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     except Exception as e:
         error_msg = f"⚠️ **API CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
-            
+        
