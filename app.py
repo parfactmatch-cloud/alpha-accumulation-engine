@@ -107,7 +107,7 @@ st.markdown(
 st.markdown(
     f"""
     <div class="terminal-nav">
-        <span>&lt;GO&gt; MULTI-AGENT SWARM ENGAGED</span> | UNIVERSE: NIFTY 250 ACTIVE | CHARTS ENGINE: DYNAMIC ON-CLICK |
+        <span>&lt;GO&gt; MULTI-AGENT SWARM ENGAGED</span> | UNIVERSE: NIFTY 250 ACTIVE | CHARTS ENGINE: FIXED DYNAMIC ON-CLICK |
         <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span>
     </div>
     """,
@@ -144,10 +144,11 @@ REAL_MARKET_UNIVERSE = [
 ]
 
 # ==============================================================================
-# 02. ON-DEMAND WIDGET PLUGINS (DYNAMIC OVERLAY LOADERS)
+# 02. ON-DEMAND WIDGET PLUGINS (DYNAMIC OVERLAY LOADERS) - FIXED
 # ==============================================================================
 def render_tradingview_widget(symbol):
-    pure_ticker = symbol.replace(".NS", "")
+    # CRITICAL TV FIXED: Stripping standard Yahoo suffix and injecting the correct NSE: routing prefix
+    clean_symbol = symbol.replace(".NS", "").strip().upper()
     tv_html = f"""
     <div id="tv-widget-container" style="height:450px;width:100%;">
       <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -155,16 +156,15 @@ def render_tradingview_widget(symbol):
       new TradingView.widget({{
         "width": "100%",
         "height": 450,
-        "symbol": "NSE:{pure_ticker}",
+        "symbol": "NSE:{clean_symbol}",
         "interval": "D",
         "timezone": "Asia/Kolkata",
         "theme": "dark",
         "style": "1",
         "locale": "en",
-        "toolbar_bg": "#f1f3f6",
         "enable_publishing": false,
         "hide_side_toolbar": false,
-        "allow_symbol_change": true,
+        "allow_symbol_change": false,
         "container_id": "tv-widget-container"
       }});
       </script>
@@ -173,17 +173,25 @@ def render_tradingview_widget(symbol):
     components.html(tv_html, height=460)
 
 def fetch_live_news_agent(ticker_obj):
+    # CRITICAL NEWS FIXED: True real-time dictionary payload parsing structure from live API logs
     try:
         news_list = ticker_obj.news
-        if not news_list: return "No active real-time news streams reported on terminal logs currently."
+        if not news_list or len(news_list) == 0: 
+            return "⚠️ No active corporate announcements found on exchange logs for this row."
+        
         compiled_news = ""
-        for item in news_list[:3]:
-            title = item.get("title", "Market Flash Headline")
+        for item in news_list[:4]:
+            title = item.get("title", None)
             link = item.get("link", "#")
-            compiled_news += f"• **[{title}]({link})**\n"
+            publisher = item.get("publisher", "Market Wire")
+            if title and "Market Flash Headline" not in title:
+                compiled_news += f"• **[{title}]({link})** *(via {publisher})*\n\n"
+        
+        if len(compiled_news) < 5:
+            return "⚠️ Corporate wire stream contains metadata filters but no raw text articles currently."
         return compiled_news
-    except:
-        return "News network interface down or parsing restrictions hit."
+    except Exception as e:
+        return f"⚠️ News feed agent bypass exception: {str(e)}"
 
 # ==============================================================================
 # 03. ROBUST AGENT MATRIX LOGICS
@@ -244,13 +252,11 @@ def agent_value_auditor(symbol):
         roce = (ebit / cap_employed) * 100 if cap_employed > 0 else 0
         debt = abs_bs.loc["Total Debt"].iloc[0] if "Total Debt" in abs_bs.index else 0
         de = debt / (mcap * 10_000_000)
-        f_shares = info.get("floatShares") or 0
-        lock_pct = ((shares - f_shares) / shares) * 100 if shares > 0 else 0
         
         if roce < 12.0 or de > 0.50: return None
         
-        desc = f"Passed high corporate benchmarks. Operating ROCE is robust at {roce:.2f}%. Balance sheet leverage profile holds an institutional Debt/Equity of {de:.2f}. Strong hands control {lock_pct:.2f}% of total equity."
-        thesis = f"This company demonstrates absolute financial compounding capabilities. The model selected this asset because it generates top-tier operational cash returns without relying on risky structural leverage, ensuring high safety margins for your long-term portfolio."
+        desc = f"Passed high corporate benchmarks. Operating ROCE is robust at {roce:.2f}%. Balance sheet leverage profile holds an institutional Debt/Equity of {de:.2f}."
+        thesis = f"This company demonstrates absolute financial compounding capabilities. The model selected this asset because it generates top-tier operational cash returns without relying on risky structural leverage, ensuring high safety margins for your portfolio."
         
         return {"Symbol": symbol, "Price (₹)": round(price, 2), "M-Cap (Cr)": round(mcap, 2), "ROCE %": round(roce, 2), "Debt/Equity": round(de, 2), "Description": desc, "Thesis": thesis, "Obj": t}
     except: return None
@@ -310,7 +316,8 @@ with tab1:
             with col2:
                 st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
                 st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
-                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
+                st.markdown(f"### 📰 Real-Time Corporate News:\n")
+                st.markdown(fetch_live_news_agent(target['Obj']), unsafe_allow_html=True)
 
 with tab2:
     st.markdown('<div class="bb-widget"><div class="bb-header">MODE 2 ENGINE LAYER // ON-DEMAND CONTROL</div></div>', unsafe_allow_html=True)
@@ -336,7 +343,8 @@ with tab2:
             with col2:
                 st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
                 st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
-                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
+                st.markdown(f"### 📰 Real-Time Corporate News:\n")
+                st.markdown(fetch_live_news_agent(target['Obj']), unsafe_allow_html=True)
 
 with tab3:
     st.markdown('<div class="bb-widget"><div class="bb-header">VOLATILITY COMPRESSION MOVERS // MODE 3 LIVE SCREEN</div></div>', unsafe_allow_html=True)
@@ -351,7 +359,6 @@ with tab3:
             st.session_state["df_m3"] = df
             
     if "df_m3" in st.session_state:
-        # Strict state validation to fix row selections on mobile screens
         selected_row = st.dataframe(st.session_state["df_m3"], use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m3")
         if selected_row and selected_row.get("selection", {}).get("rows"):
             idx = selected_row["selection"]["rows"][0]
@@ -363,5 +370,6 @@ with tab3:
             with col2:
                 st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
                 st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
-                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
-
+                st.markdown(f"### 📰 Real-Time Corporate News:\n")
+                st.markdown(fetch_live_news_agent(target['Obj']), unsafe_allow_html=True)
+        
