@@ -1,6 +1,10 @@
+import datetime
 import yfinance as yf
 import google.generativeai as genai
-from config import GEMINI_API_KEY
+import streamlit as st  # Added to load native streamlit secrets router
+
+# Pulling the key securely from the Streamlit Cloud Secrets management matrix
+GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
@@ -32,7 +36,7 @@ def fetch_live_news_agent(symbol, execution_mode_tag):
 def run_ai_cognitive_agent(stock_data, context_tag):
     ticker_name = stock_data['Symbol'].replace('.NS','')
     
-    # 1. HARDENED PURE METRICS ANALYTICAL VERDICTS
+    # 1. METRICS SPECTRUM BREAKDOWN
     if "ROCE %" in stock_data:
         roce, de, mcap = stock_data["ROCE %"], stock_data["Debt/Equity"], stock_data["M-Cap (Cr)"]
         efficiency_status = "Hyper-Efficient Compounder" if roce > 25 else "Stable Value Accumulator"
@@ -66,8 +70,8 @@ def run_ai_cognitive_agent(stock_data, context_tag):
             f"• **Tactical Execution Order**: The significant volume contraction inside the terminal base envelope signals systemic sell-side exhaustion."
         )
 
-    # 2. PREMIUM STRATIFIED COGNITIVE ROUTER
-    if not GEMINI_API_KEY or "YOUR_GEMINI" in GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
+    # 2. SEPARATED COGNITIVE PRO ACTIVATION PIPELINE
+    if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
     
     try:
@@ -78,8 +82,9 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         - Strategy context block: {stock_data['Description']}
         - Swarm target parameters: {context_tag}
         Write an aggressive financial research report breakdown detailing specific corporate strength metrics and portfolio allocation logic. 
-        Use heavy markdown. Bloomberg tone only. No shortcuts or configuration words. Dense paragraphs under 3 blocks.
+        Use heavy markdown. Bloomberg tone only. Dense paragraphs under 3 blocks.
         """
         return model.generate_content(prompt).text
-    except: return fallback_analysis
-        
+    except: 
+        return fallback_analysis
+    
