@@ -66,7 +66,6 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         return fallback_analysis
         
     try:
-        # Standard HTTP library call for absolute stability (No SDK dependency crash)
         conn = http.client.HTTPSConnection("api.groq.com")
         
         prompt = f"""
@@ -98,12 +97,17 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         }
         
         conn.request("POST", "/openai/v1/chat/completions", payload, headers)
-        res = conn.getcallresponse() if hasattr(conn, 'getcallresponse') else conn.getresponse()
+        res = conn.getresponse()
         data = res.read()
-        result_json = json.loads(data.decode("utf-8"))
         
-        return result_json['choices'][0]['message']['content']
+        # FIXED PARSING LAYER
+        result_json = json.loads(data.decode("utf-8"))
+        if 'choices' in result_json and len(result_json['choices']) > 0:
+            return result_json['choices'][0]['message']['content']
+        else:
+            return f"⚠️ **GROQ API ERROR RESPONSE**: {str(result_json)}\n\n---\n\n{fallback_analysis}"
+            
     except Exception as e:
-        # Displays clear dynamic errors if anything goes out of sync
         error_msg = f"⚠️ **GROQ CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
+        
