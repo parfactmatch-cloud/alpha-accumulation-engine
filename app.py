@@ -33,10 +33,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; SWARM SEPARATED REGIME STACK</span> | HIGH-PRECISION VISUAL MATRIX | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; SWARM SECURE LIVE MATRIX</span> | GOOGLE NEWS RSS ACTIVATED | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
 st.title("🎛️ ALPHA MULTI-AGENT SWARM TERMINAL")
 st.caption("AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL")
 
+# SIDEBAR CONTROLS
 st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>🎯 MANUAL STOCK SEARCH</h3>", unsafe_allow_html=True)
 MANUAL_INPUT = st.sidebar.text_input("Add Custom Ticker", "", key="master_ticker_search_box").strip().upper()
 
@@ -92,7 +93,7 @@ with tab1:
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'IPO')}")
 
 with tab2:
-    st.markdown('<div class="bb-widget"><div class="bb-header">MODE 2 ENGINE LAYER // ON-DEMAND CONTROL</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="bb-widget"><div class="bb-header">MODE 2 ENGINE LAYER // ON-DEMART CONTROL</div></div>', unsafe_allow_html=True)
     if st.button("EXECUTE RATIOS SWEEP", key="btn_m2"):
         with st.spinner("Processing..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
@@ -138,4 +139,4 @@ with tab3:
                 st.markdown(run_ai_cognitive_agent(target, "Intraday VCP Squeeze Engine"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'VCP')}")
-
+                
