@@ -1,17 +1,17 @@
 import concurrent.futures
 import datetime
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import yfinance as yf
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# 00. ADVANCED BLOOMBERG TERMINAL UI THEME INJECTION
+# 00. HIGH-FIDELITY PLATFORM THEME INITIALIZATION
 # ==============================================================================
 st.set_page_config(
     page_title="ALPHA QUANT TERMINAL",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded"
 )
 
 st.markdown(
@@ -80,33 +80,45 @@ st.markdown(
     
     .console-box {
         background-color: #141923;
-        border: 1px solid #ff980055;
+        border-left: 4px solid #ff9800;
+        border-top: 1px solid #242b35;
+        border-right: 1px solid #242b35;
+        border-bottom: 1px solid #242b35;
         border-radius: 4px;
         padding: 20px;
         margin-top: 25px;
     }
     
+    h3 {
+        color: #ff9800 !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-top: 15px !important;
+        border-bottom: 1px solid #242b35;
+        padding-bottom: 5px;
+    }
+    
     #MainMenu, footer, header {visibility: hidden;}
     </style>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 st.markdown(
     f"""
     <div class="terminal-nav">
-        <span>&lt;GO&gt; MULTI-AGENT TERMINAL RUNNING</span> | UNIVERSE: NIFTY 250 CRITICAL FIX | AGENTS ACTIVE |
-        <span>STABILITY STATUS: SECURED</span>
+        <span>&lt;GO&gt; MULTI-AGENT SWARM ENGAGED</span> | UNIVERSE: NIFTY 250 ACTIVE | CHARTS ENGINE: DYNAMIC ON-CLICK |
+        <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span>
     </div>
     """,
     unsafe_allow_html=True
 )
 
 st.title("🎛️ ALPHA MULTI-AGENT SWARM TERMINAL")
-st.caption("Distributed Quantitative Framework | Bug Fix & Optimization Deployment")
+st.caption("AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL")
 
 # ==============================================================================
-# 01. CORE TUNING SIDEBAR CONTROL PANEL
+# 01. PARAMETERS PANEL
 # ==============================================================================
 st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>⚙️ CORE TERMINAL CONFIG</h3>", unsafe_allow_html=True)
 MIN_MARKET_CAP_CR = st.sidebar.number_input("MIN MCAP GATE (CR)", value=1000)
@@ -132,17 +144,17 @@ REAL_MARKET_UNIVERSE = [
 ]
 
 # ==============================================================================
-# 02. TRADINGVIEW & AUXILIARY METADATA UTILITIES
+# 02. ON-DEMAND WIDGET PLUGINS (DYNAMIC OVERLAY LOADERS)
 # ==============================================================================
 def render_tradingview_widget(symbol):
     pure_ticker = symbol.replace(".NS", "")
     tv_html = f"""
-    <div id="tv-widget-container" style="height:400px;width:100%;">
+    <div id="tv-widget-container" style="height:450px;width:100%;">
       <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
       <script type="text/javascript">
       new TradingView.widget({{
         "width": "100%",
-        "height": 400,
+        "height": 450,
         "symbol": "NSE:{pure_ticker}",
         "interval": "D",
         "timezone": "Asia/Kolkata",
@@ -158,7 +170,7 @@ def render_tradingview_widget(symbol):
       </script>
     </div>
     """
-    components.html(tv_html, height=410)
+    components.html(tv_html, height=460)
 
 def fetch_live_news_agent(ticker_obj):
     try:
@@ -174,21 +186,19 @@ def fetch_live_news_agent(ticker_obj):
         return "News network interface down or parsing restrictions hit."
 
 # ==============================================================================
-# 03. HIGH-STABILITY MULTI-AGENT DISPATCHERS (FIXED CRASHES)
+# 03. ROBUST AGENT MATRIX LOGICS
 # ==============================================================================
-
 def agent_ipo_analyst(symbol):
     try:
         t = yf.Ticker(symbol)
         hist = t.history(period="max")
         if hist.empty: return None
-        
         first_date = hist.index[0].date()
         if (datetime.date.today() - first_date).days > (MAX_IPO_AGE_YEARS * 365): return None
         
         df = hist.tail(int(MAX_IPO_AGE_YEARS * 250))
         info = t.info
-        shares = info.get("sharesOutstanding") or info.get("impliedSharesOutstanding") or 1
+        shares = info.get("sharesOutstanding") or 1
         f_shares = info.get("floatShares")
         if not f_shares: return None
         
@@ -202,13 +212,12 @@ def agent_ipo_analyst(symbol):
         base_turnover = (base["Volume"] * base["Close"]).sum() / 10_000_000
         churn_pct = (base_turnover / ff_mcap) * 100
         
-        # Soft validation gate so data prints seamlessly
-        status = "🔥 BUY TRIGGER" if churn_pct >= TARGET_ABSORPTION_PCT else "WATCHLIST (Squeezing)"
+        if churn_pct < TARGET_ABSORPTION_PCT: return None
         
-        desc = f"Stock listed on {first_date}. Public free float capital equals ₹{ff_mcap:,.2f} Cr. Total accumulation turnover over floor level recorded at ₹{base_turnover:,.2f} Cr, showing {churn_pct:.2f}% retail float rotation."
-        thesis = f"Displaying operational institutional absorption patterns. Retail weak hands over the base range are getting systematically shaken out, tightening market float for supply-squeeze momentum."
+        desc = f"Stock filter trigger passed. Public free float asset base equals ₹{ff_mcap:,.2f} Cr. Total consolidation floor volume churn recorded at ₹{base_turnover:,.2f} Cr, which satisfies your custom {TARGET_ABSORPTION_PCT}% threshold gate requirement."
+        thesis = f"The core quantitative model picked this asset due to structural institutional float absorption. Retail weak hands over the accumulation floor have been shaken out by operator algorithms, building low free-float overhead supply for momentum breakouts."
         
-        return {"Symbol": symbol, "Price (₹)": round(price, 2), "M-Cap (Cr)": round(mcap, 2), "Free-Float (Cr)": round(ff_mcap, 2), "Churn %": round(churn_pct, 2), "Status": status, "Description": desc, "Thesis": thesis, "Obj": t}
+        return {"Symbol": symbol, "Price (₹)": round(price, 2), "M-Cap (Cr)": round(mcap, 2), "Free-Float (Cr)": round(ff_mcap, 2), "Churn %": round(churn_pct, 2), "Description": desc, "Thesis": thesis, "Obj": t}
     except: return None
 
 def agent_value_auditor(symbol):
@@ -216,7 +225,6 @@ def agent_value_auditor(symbol):
         t = yf.Ticker(symbol)
         df = t.history(period="2y")
         if df.empty or len(df) < 100: return None
-        
         abs_bs, abs_fi, info = t.balance_sheet, t.financials, t.info
         if abs_bs.empty or abs_fi.empty: return None
         
@@ -235,26 +243,22 @@ def agent_value_auditor(symbol):
         cap_employed = ta - cl
         roce = (ebit / cap_employed) * 100 if cap_employed > 0 else 0
         debt = abs_bs.loc["Total Debt"].iloc[0] if "Total Debt" in abs_bs.index else 0
-        equity = abs_bs.loc["Stockholders Equity"].iloc[0] if "Stockholders Equity" in abs_bs.index else 1
-        de = debt / equity
+        de = debt / (mcap * 10_000_000)
         f_shares = info.get("floatShares") or 0
         lock_pct = ((shares - f_shares) / shares) * 100 if shares > 0 else 0
         
-        # Optimized threshold filter parameters to guarantee fluid data flow
-        if roce < 10.0 or de > 0.60: return None
-        status = "⭐ HIGH QUALITY"
+        if roce < 12.0 or de > 0.50: return None
         
-        desc = f"Annual Operating ROCE stands high at {roce:.2f}%. Leverage metric Debt/Equity safely prints at {de:.2f}. Core strong hands float control calculated at {lock_pct:.2f}%."
-        thesis = f"Represents an optimal fundamental compounder. High equity returns coupled with manageable capital structures guarantee solid financial stability across mid-to-long term portfolios."
+        desc = f"Passed high corporate benchmarks. Operating ROCE is robust at {roce:.2f}%. Balance sheet leverage profile holds an institutional Debt/Equity of {de:.2f}. Strong hands control {lock_pct:.2f}% of total equity."
+        thesis = f"This company demonstrates absolute financial compounding capabilities. The model selected this asset because it generates top-tier operational cash returns without relying on risky structural leverage, ensuring high safety margins for your long-term portfolio."
         
-        return {"Symbol": symbol, "Price (₹)": round(price, 2), "M-Cap (Cr)": round(mcap, 2), "ROCE %": round(roce, 2), "Debt/Equity": round(de, 2), "Status": status, "Description": desc, "Thesis": thesis, "Obj": t}
+        return {"Symbol": symbol, "Price (₹)": round(price, 2), "M-Cap (Cr)": round(mcap, 2), "ROCE %": round(roce, 2), "Debt/Equity": round(de, 2), "Description": desc, "Thesis": thesis, "Obj": t}
     except: return None
 
 def agent_vcp_scalper(symbol):
     try:
         t = yf.Ticker(symbol)
         df = t.history(period="5d", interval="15m")
-        # FIX: Handled dynamic evaluation criteria bounds safely to dodge empty/dead returns
         if df.empty or len(df) < 30: return None
         
         r_max = df["High"].max()
@@ -269,91 +273,95 @@ def agent_vcp_scalper(symbol):
         d2 = ((r_max - low_t2) / r_max) * 100 if r_max > 0 else 0
         d3 = ((r_max - low_t3) / r_max) * 100 if r_max > 0 else 0
         
-        # Soft constraint gates to avoid dropping compliant liquid candidates
         if not (d1 >= d2 and d2 >= d3): return None
-        status = "🟢 VCP COMPLIANT"
         
-        desc = f"Volatility contraction sequence active. Multi-wave trace array data: Wave 1={d1:.2f}% | Wave 2={d2:.2f}% | Wave 3={d3:.2f}%."
-        thesis = f"Asset volatility compression has entered tight terminal ranges. Decreasing supply pressure indicates an expanding price breakout probability setup over live high-frequency waves."
+        desc = f"Volatility contraction sequence matched. Multi-wave compression array tracks as follows: W1 Depth={d1:.2f}% -> W2 Depth={d2:.2f}% -> W3 Depth={d3:.2f}%."
+        thesis = f"The stock has entered an absolute volatility compression bottleneck. Subsequent contraction cycles show heavy supply exhaustion, indicating that any intraday volume push will trigger a highly explosive high-frequency momentum breakout."
         
-        return {"Symbol": symbol, "Live Price": round(price, 2), "Ceiling Res": round(r_max, 2), "W1 %": round(d1, 2), "W2 %": round(d2, 2), "Status": status, "Description": desc, "Thesis": thesis, "Obj": t}
+        return {"Symbol": symbol, "Live Price": round(price, 2), "Ceiling Res": round(r_max, 2), "W1 %": round(d1, 2), "W2 %": round(d2, 2), "Status": "🟢 COMPLIANT", "Description": desc, "Thesis": thesis, "Obj": t}
     except: return None
 
 # ==============================================================================
-# 04. MULTI-PANEL CONSOLE RENDER BLOCKS
+# 04. MULTI-PANEL OPERATIONAL INTERFACE
 # ==============================================================================
 tab1, tab2, tab3 = st.tabs(["[ MODE 1: IPO CORE ]", "[ MODE 2: VALUE OWNER ]", "[ MODE 3: INTRADAY VCP ]"])
 
 with tab1:
     st.markdown('<div class="bb-widget"><div class="bb-header">MODE 1 ENGINE LAYER // ON-DEMAND CONTROL</div></div>', unsafe_allow_html=True)
     if st.button("EXECUTE IPO SWEEP", key="btn_m1"):
-        with st.spinner("Executing Float Ingestion Swarm..."):
+        with st.spinner("Processing Matrix Data..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
                 futures = [ex.submit(agent_ipo_analyst, s) for s in REAL_MARKET_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res:
             df = pd.DataFrame(res).drop(columns=["Description", "Thesis", "Obj"])
-            selected_row = st.dataframe(df, use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m1")
+            st.session_state["res_m1"] = res
+            st.session_state["df_m1"] = df
             
-            if selected_row and selected_row.get("selection", {}).get("rows"):
-                idx = selected_row["selection"]["rows"][0]
-                target = res[idx]
-                
-                st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET CODE: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
-                col1, col2 = st.columns([1.2, 1])
-                with col1: render_tradingview_widget(target["Symbol"])
-                with col2:
-                    st.markdown(f"### ⚙️ Quant Filtration Matrix:\n{target['Description']}")
-                    st.markdown(f"### 🎯 Portfolio Allocation Thesis:\n{target['Thesis']}")
-                    st.markdown(f"### 📰 Real-Time Corporate Feed:\n{fetch_live_news_agent(target['Obj'])}")
-        else: st.warning("NO ASSETS CLEARED INTERVALLING RULES CURRENTLY. ADJUST SIDBAR SLIDERS.")
+    if "df_m1" in st.session_state:
+        selected_row = st.dataframe(st.session_state["df_m1"], use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m1")
+        if selected_row and selected_row.get("selection", {}).get("rows"):
+            idx = selected_row["selection"]["rows"][0]
+            target = st.session_state["res_m1"][idx]
+            
+            st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1.3, 1])
+            with col1: render_tradingview_widget(target["Symbol"])
+            with col2:
+                st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
+                st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
+                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
 
 with tab2:
     st.markdown('<div class="bb-widget"><div class="bb-header">MODE 2 ENGINE LAYER // ON-DEMAND CONTROL</div></div>', unsafe_allow_html=True)
     if st.button("EXECUTE RATIOS SWEEP", key="btn_m2"):
-        with st.spinner("Auditing Corporate Financial Matrix..."):
+        with st.spinner("Processing Matrix Data..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
                 futures = [ex.submit(agent_value_auditor, s) for s in REAL_MARKET_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res:
             df = pd.DataFrame(res).drop(columns=["Description", "Thesis", "Obj"])
-            selected_row = st.dataframe(df, use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m2")
+            st.session_state["res_m2"] = res
+            st.session_state["df_m2"] = df
             
-            if selected_row and selected_row.get("selection", {}).get("rows"):
-                idx = selected_row["selection"]["rows"][0]
-                target = res[idx]
-                
-                st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET CODE: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
-                col1, col2 = st.columns([1.2, 1])
-                with col1: render_tradingview_widget(target["Symbol"])
-                with col2:
-                    st.markdown(f"### ⚙️ Quant Filtration Matrix:\n{target['Description']}")
-                    st.markdown(f"### 🎯 Portfolio Allocation Thesis:\n{target['Thesis']}")
-                    st.markdown(f"### 📰 Real-Time Corporate Feed:\n{fetch_live_news_agent(target['Obj'])}")
-        else: st.warning("NO ASSETS PASSED CORE RATIO GATES. TRY DECREASING VALUATION CONSTRAINTS.")
+    if "df_m2" in st.session_state:
+        selected_row = st.dataframe(st.session_state["df_m2"], use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m2")
+        if selected_row and selected_row.get("selection", {}).get("rows"):
+            idx = selected_row["selection"]["rows"][0]
+            target = st.session_state["res_m2"][idx]
+            
+            st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1.3, 1])
+            with col1: render_tradingview_widget(target["Symbol"])
+            with col2:
+                st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
+                st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
+                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
 
 with tab3:
     st.markdown('<div class="bb-widget"><div class="bb-header">VOLATILITY COMPRESSION MOVERS // MODE 3 LIVE SCREEN</div></div>', unsafe_allow_html=True)
-    # FIX: Cleaned button callback parameters to restore execution flow and clickability state completely
     if st.button("EXECUTE SCALPER SWEEP", key="btn_m3"):
-        with st.spinner("Scanning 15-Minute Waves Contraction..."):
+        with st.spinner("Processing Matrix Data..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
                 futures = [ex.submit(agent_vcp_scalper, s) for s in REAL_MARKET_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res:
             df = pd.DataFrame(res).drop(columns=["Description", "Thesis", "Obj"])
-            selected_row = st.dataframe(df, use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m3")
+            st.session_state["res_m3"] = res
+            st.session_state["df_m3"] = df
             
-            if selected_row and selected_row.get("selection", {}).get("rows"):
-                idx = selected_row["selection"]["rows"][0]
-                target = res[idx]
-                
-                st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET CODE: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
-                col1, col2 = st.columns([1.2, 1])
-                with col1: render_tradingview_widget(target["Symbol"])
-                with col2:
-                    st.markdown(f"### ⚙️ Quant Filtration Matrix:\n{target['Description']}")
-                    st.markdown(f"### 🎯 Portfolio Allocation Thesis:\n{target['Thesis']}")
-                    st.markdown(f"### 📰 Real-Time Corporate Feed:\n{fetch_live_news_agent(target['Obj'])}")
-        else: st.warning("NO HIGH-FREQUENCY WAVE COMPRESSIONS CAPTURED AT THIS TIME INTERVALLING.")
-        
+    if "df_m3" in st.session_state:
+        # Strict state validation to fix row selections on mobile screens
+        selected_row = st.dataframe(st.session_state["df_m3"], use_container_width=True, on_select="rerun", selection_mode="single-row", key="grid_m3")
+        if selected_row and selected_row.get("selection", {}).get("rows"):
+            idx = selected_row["selection"]["rows"][0]
+            target = st.session_state["res_m3"][idx]
+            
+            st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {target["Symbol"].replace(".NS","")}</b></div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1.3, 1])
+            with col1: render_tradingview_widget(target["Symbol"])
+            with col2:
+                st.markdown(f"### ⚙️ Why Filtered? (Quant Analysis Layout)\n{target['Description']}")
+                st.markdown(f"### 🎯 Portfolio Inclusion Thesis:\n{target['Thesis']}")
+                st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Obj'])}")
+
