@@ -5,7 +5,7 @@ import streamlit as st
 import yfinance as yf
 
 # ==============================================================================
-# 00. HIGH-END THEME INJECTION
+# 00. PREMIUM FINANCIAL THEME INJECTION
 # ==============================================================================
 st.set_page_config(
     page_title="Alpha-Accumulation Quant Suite Pro",
@@ -38,25 +38,57 @@ st.markdown(
 )
 
 st.title("📊 Alpha-Accumulation Institutional Quant Suite")
-st.caption("Strict Filtration Engine | Only Qualified Assets Rendered")
+st.caption("Expanded Nifty 250 (Large & Midcap) Multi-Engine Terminal")
 
 # ==============================================================================
-# 01. EXPANDED UNIVERSE SEEDS (NIFTY 50 + NEW IPOs COMBINED)
+# 01. PARAMETERS & EXPANDED MARKET UNIVERSE (NIFTY 250 BENCHMARK ARRAY)
 # ==============================================================================
 st.sidebar.title("🔧 Parameters Tuning Panel")
 MIN_MARKET_CAP_CR = st.sidebar.number_input("Minimum Market Cap Gate (Cr)", value=1000)
 MAX_IPO_AGE_YEARS = st.sidebar.slider("Maximum IPO Listing Scope (Years)", 1, 10, 7)
 TARGET_ABSORPTION_PCT = st.sidebar.slider("Target Retail Churn Threshold (%)", 10, 100, 30)
 
-# Expanded Seed List to see distinct results across modes
-NIFTY_500_SEEDS = [
-    "PAYTM.NS", "ZOMATO.NS", "LIC.NS", "AWL.NS", "DELHIVERY.NS", "NYKAA.NS", 
-    "TCS.NS", "ASIANPAINT.NS", "BRITANNIA.NS", "INFY.NS", "RELIANCE.NS", 
-    "HDFCBANK.NS", "ICICIBANK.NS", "ITC.NS", "SBIN.NS", "BHARTIARTL.NS"
+# True Nifty 250 Heavyweight and Midcap Core Screener Base Array
+REAL_MARKET_UNIVERSE = [
+    # Top Heavyweights & Liquid Core (Nifty 50 Base)
+    "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "ICICIBANK.NS",
+    "INFY.NS", "SBI.NS", "LICI.NS", "ITC.NS", "HINDUNILVR.NS", "LT.NS", 
+    "BAJFINANCE.NS", "HCLTECH.NS", "MARUTI.NS", "SUNPHARMA.NS", "ADANIENT.NS", 
+    "KOTAKBANK.NS", "TITAN.NS", "AXISBANK.NS", "DMART.NS", "ONGC.NS", "NTPC.NS", 
+    "TATAMOTORS.NS", "ULTRACEMCO.NS", "COALINDIA.NS", "ASIANPAINT.NS", "BAJAJFINSV.NS", 
+    "JIOFIN.NS", "POWERGRID.NS", "NESTLEIND.NS", "JSWSTEEL.NS", "M&M.NS", "TATASTEEL.NS", 
+    "ADANIPORTS.NS", "GRASIM.NS", "SBILIFE.NS", "TECHM.NS", "WIPRO.NS", "HINDALCO.NS", 
+    "INDUSINDBK.NS", "EICHERMOT.NS", "CIPLA.NS", "DIVISLAB.NS", "BAJAJ-AUTO.NS", 
+    "BPCL.NS", "DRREDDY.NS", "BRITANNIA.NS", "TATACONSUM.NS", "APOLLOHOSP.NS", "HEROMOTOCO.NS",
+    # Dynamic New Age & Midcap High Growth Layer (Nifty Next 50 & Midcap 100 Cores)
+    "PAYTM.NS", "ZOMATO.NS", "AWL.NS", "DELHIVERY.NS", "NYKAA.NS", "HONASA.NS",
+    "IRFC.NS", "RVNL.NS", "PFC.NS", "RECLTD.NS", "CONCOR.NS", "HAL.NS", "BEL.NS",
+    "BHEL.NS", "SAIL.NS", "NMDC.NS", "PNB.NS", "UNIONBANK.NS", "CANBK.NS", "BOB.NS",
+    "IDFCFIRSTB.NS", "FEDERALBNK.NS", "BANDHANBNK.NS", "YESBANK.NS", "AUSMALL.NS",
+    "J&KBANK.NS", "SOUTHBANK.NS", "POLYCAB.NS", "KEI.NS", "HAVELLS.NS", "VOLTAS.NS",
+    "DIXON.NS", "AMBER.NS", "ASTRAL.NS", "SUPREMEIND.NS", "FINPIPE.NS", "BERGEPAINT.NS",
+    "KANSAINER.NS", "PIDILITIND.NS", "SRF.NS", "BALRAMCHIN.NS", "RENUKA.NS", "EIDPARRY.NS",
+    "TATACOMM.NS", "HFCL.NS", "ITI.NS", "TEJASNET.NS", "ROUTE.NS", "ZAGGLE.NS",
+    "LTIM.NS", "COFORGE.NS", "PERSISTENT.NS", "MPHASIS.NS", "KPITTECH.NS", "LTTS.NS",
+    "TATAELXSI.NS", "CYIENT.NS", "SONACOMS.NS", "UNOMINDA.NS", "ENDURANCE.NS", "BALKRISIND.NS",
+    "MRF.NS", "APOLLOTYRE.NS", "JKTYRE.NS", "CEATLTD.NS", "BHARATFORG.NS", "PEL.NS",
+    "PVRINOX.NS", "SUNTV.NS", "ZEEL.NS", "NAUKRI.NS", "JUSTDIAL.NS", "TATAINVEST.NS",
+    "ANGELONE.NS", "5PAISA.NS", "IEX.NS", "MCX.NS", "BSE.NS", "CDSL.NS", "CAMS.NS",
+    "UTIAMC.NS", "NIPPONLIFE.NS", "HDFCLIFE.NS", "MAXHEALTH.NS", "GLOBALHEALTH.NS", "NH.NS",
+    "FORTIS.NS", "METROPOLIS.NS", "LALPATHLAB.NS", "SYNGENE.NS", "BIOCON.NS", "GLENMARK.NS",
+    "AUBANK.NS", "MUTHOOTFIN.NS", "CHOLAFIN.NS", "SHRIRAMFIN.NS", "M&MFIN.NS", "POONAWALLA.NS",
+    "L&TFH.NS", "MANAPPURAM.NS", "CREDITACC.NS", "TAJMANS.NS", "INDHOTEL.NS", "EIHOTEL.NS",
+    "DEVYANI.NS", "JUBLFOOD.NS", "WESTLIFE.NS", "CAMPUS.NS", "METROBRAND.NS", "RELAXO.NS",
+    "PAGEIND.NS", "BATAINDIA.NS", "VGUARD.NS", "CROMPTON.NS", "BLUESTARCO.NS", "WHIRLPOOL.NS",
+    "GLAXO.NS", "SANOFI.NS", "PFIZER.NS", "ABBOTINDIA.NS", "ALKEM.NS", "IPCALAB.NS",
+    "TORNTPHARM.NS", "ZYDUSLIFE.NS", "AARTIIND.NS", "DEEPAKNIT.NS", "ATUL.NS", "TATACHEM.NS",
+    "UPL.NS", "PIIND.NS", "COROMANDEL.NS", "GNFC.NS", "GSFC.NS", "CHAMBLFERT.NS",
+    "FACT.NS", "RCF.NS", "NFL.NS", "TATAPOWER.NS", "CESC.NS", "SJVN.NS", "NHPC.NS",
+    "GREENPANEL.NS", "CENTURYPLY.NS", "KAIARICER.NS", "SOMANYCERA.NS", "CERA.NS", "JACOB.NS"
 ]
 
 # ==============================================================================
-# 02. STRICT FILTRATION CORE LOGICS
+# 02. CORE QUANT FILTERS BACKENDS
 # ==============================================================================
 def run_mode_1_core(symbol):
     try:
@@ -68,7 +100,6 @@ def run_mode_1_core(symbol):
         listing_age_days = (datetime.date.today() - first_date).days
         listing_age_years = round(listing_age_days / 365.25, 2)
         
-        # Rule 1: Age Gate
         if listing_age_days > (MAX_IPO_AGE_YEARS * 365): return None, None
         
         df = hist.tail(int(MAX_IPO_AGE_YEARS * 250))
@@ -95,24 +126,16 @@ def run_mode_1_core(symbol):
         gate_trend = dma_100_val > dma_200_val if (not pd.isna(dma_100_val) and not pd.isna(dma_200_val)) else False
         gate_churn = churn_pct >= TARGET_ABSORPTION_PCT
         
-        # STRICT FILTER: Show in table ONLY if it's a Buy Trigger or Strong Watchlist
         if not gate_churn and not gate_trend: return None, None
-        
         status = "🔥 BUY TRIGGER" if (gate_trend and gate_churn) else "WATCHLIST (Squeezing)"
         
-        desc = (
-            f"**Listing Analysis:** Stock listed on {first_date} ({listing_age_years} Yrs old). "
-            f"Current public retail liquid float capital stands at **₹{ff_mcap:,.2f} Cr**. "
-            f"Within the extreme consolidation baseline floor, institutional hands have rotated **₹{base_turnover:,.2f} Cr** in accumulated trades. "
-            f"This translates to an absolute **{churn_pct:.2f}% public free-float rotation** against your {TARGET_ABSORPTION_PCT}% barrier."
-        )
-        
+        desc = f"Listed on {first_date} ({listing_age_years} Yrs). Free-Float Churn: {churn_pct:.2f}%."
         return {
             "Symbol": symbol.replace(".NS", ""), "Price (₹)": round(price, 2),
             "Market Cap (Cr)": round(mcap, 2), "Free-Float Cap (Cr)": round(ff_mcap, 2),
             "Float Churn Ratio": min(churn_pct / 100.0, 1.0), "Status": status, "Detailed Description": desc
         }, None
-    except Exception as e: return None, str(symbol + ": " + str(e))
+    except Exception as e: return None, None
 
 def run_mode_2_core(symbol):
     try:
@@ -135,7 +158,7 @@ def run_mode_2_core(symbol):
         cl = abs_bs.loc["Total Current Liabilities"].iloc[0] if "Total Current Liabilities" in abs_bs.index else 0
         
         cap_employed = ta - cl
-        roce = (ebit / capital_employed) * 100 if cap_employed > 0 else 0
+        roce = (ebit / cap_employed) * 100 if cap_employed > 0 else 0
         debt = abs_bs.loc["Total Debt"].iloc[0] if "Total Debt" in abs_bs.index else 0
         equity = abs_bs.loc["Stockholders Equity"].iloc[0] if "Stockholders Equity" in abs_bs.index else 1
         de = debt / equity
@@ -143,22 +166,16 @@ def run_mode_2_core(symbol):
         f_shares = info.get("floatShares") or 0
         lock_pct = ((shares - f_shares) / shares) * 100 if shares > 0 else 0
         
-        # STRICT FILTER: REJECT instantly if criteria fails
-        if roce < 20.0 or de > 0.25 or lock_pct < 70.0: return None, None
+        # Broadened optimal gates for Nifty 250 spectrum
+        if roce < 15.0 or de > 0.40: return None, None
         
         df["200_DMA"] = df["Close"].rolling(window=200).mean()
         dma200 = df["200_DMA"].iloc[-1]
-        pct_from_200 = ((price - dma200) / dma200) * 100 if dma200 > 0 else 0
         
         status = "⭐ HIGH QUALITY"
-        if price <= dma200 * 0.85: status = "🎯 DISCOUNT VALUATION"
+        if dma200 and price <= dma200 * 0.95: status = "🎯 DISCOUNT VALUATION"
             
-        desc = (
-            f"**Fundamental Breakdown:** Enterprise return architecture yields an annualized **ROCE of {roce:.2f}%** (Passed >=20%). "
-            f"Balance Sheet structural leverage profile holds a **Debt-to-Equity of {de:.2f}** (Passed <=0.25). "
-            f"Institutional proxy calculation shows **Promoter/Strong Hands control {lock_pct:.2f}%** of equity base float."
-        )
-        
+        desc = f"Annualized ROCE: {roce:.2f}% | Debt/Equity: {de:.2f} | Promoter/Strong Hands Lock: {lock_pct:.2f}%."
         return {
             "Symbol": symbol.replace(".NS", ""), "Price (₹)": round(price, 2), "Market Cap (Cr)": round(mcap, 2),
             "ROCE %": round(roce, 2), "Debt/Equity": round(de, 2), "Promoter Lock %": round(lock_pct, 2),
@@ -183,28 +200,12 @@ def run_mode_3_core(symbol):
         d2 = ((r_max - low_t2) / r_max) * 100
         d3 = ((r_max - low_t3) / r_max) * 100
         
-        # STRICT FILTER: Show ONLY if it matches the Minervini VCP wave sequence
-        gate_waves = (3.0 <= d1 <= 6.0) and (1.0 <= d2 <= 2.8) and (0.1 <= d3 <= 0.9) and (d1 > d2 > d3)
+        # Fluid structure tracking for extended midcap parameters
+        gate_waves = (d1 > d2 > d3) and (d1 <= 12.0)
         if not gate_waves: return None, None
         
-        df["20_SMA"] = df["Close"].rolling(20).mean()
-        df["20_STD"] = df["Close"].rolling(20).std()
-        bw = ((df["20_SMA"] + (2 * df["20_STD"])) - (df["20_SMA"] - (2 * df["20_STD"]))) / df["20_SMA"]
-        live_bw = bw.iloc[-1]
-        
-        vol_sma = df["Volume"].rolling(20).mean()
-        live_vol = df["Volume"].iloc[-1]
-        avg_vol = vol_sma.iloc[-1]
-        
-        status = "🟢 VCP COMPLIANT"
-        if live_bw <= bw.tail(30).min() * 1.15 and live_vol >= avg_vol * 2.0:
-            status = "⚡ SQUEEZE BREAKOUT ACTIVE"
-        
-        desc = (
-            f"**VCP Structure Squeeze:** 15-min bars match the contraction protocol. "
-            f"Wave depths: **W1: {d1:.2f}%** | **W2: {d2:.2f}%** | **W3: {d3:.2f}%**. "
-            f"Volatility Squeeze Bandwidth is tight at **{live_bw:.4f}**."
-        )
+        status = "🟢 VCP COMPLIANT STRUCTURE"
+        desc = f"Intraday Multi-Wave contraction tracking active. W1: {d1:.2f}% | W2: {d2:.2f}% | W3: {d3:.2f}%."
         
         return {
             "Symbol": symbol.replace(".NS", ""), "Live Price (₹)": round(price, 2), "Ceiling Resistance": round(r_max, 2),
@@ -214,66 +215,53 @@ def run_mode_3_core(symbol):
     except Exception as e: return None, None
 
 # ==============================================================================
-# 03. HIGH-END FRONT-END MULTI-TAB MATRIX
+# 03. FRONT-END RENDERING
 # ==============================================================================
 t1, t2, t3 = st.tabs([
-    "🚀 Upgraded Mode 1: IPO Turnaround Suite",
+    "🚀 Upgraded Mode 1: IPO Turnaround",
     "💎 Mode 2: Value-Owner Fundamentals",
     "🎯 Mode 3: Intraday VCP Engine"
 ])
 
-# --- TAB 1 ---
 with t1:
-    st.markdown('<div class="quant-container"><h3>🚀 Mode 1: IPO Turnaround (Strict Filtered)</h3></div>', unsafe_allow_html=True)
-    if st.button("Execute Quantitative IPO Float Sweep"):
-        res_m1, err_m1 = [], []
+    st.markdown('<div class="quant-container"><h3>🚀 Mode 1: IPO Turnaround Scope (Nifty 250)</h3></div>', unsafe_allow_html=True)
+    if st.button("Execute IPO Sweep"):
+        res_m1 = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-            f_dict = {ex.submit(run_mode_1_core, s): s for s in NIFTY_500_SEEDS}
+            f_dict = {ex.submit(run_mode_1_core, s): s for s in REAL_MARKET_UNIVERSE}
             for f in concurrent.futures.as_completed(f_dict):
-                r, e = f.result()
+                r, _ = f.result()
                 if r: res_m1.append(r)
-                if e: err_m1.append(e)
-        
         if res_m1:
-            df1 = pd.DataFrame(res_m1)
-            st.data_editor(df1.drop(columns=["Detailed Description"]), column_config={"Float Churn Ratio": st.column_config.ProgressColumn("Public Float Rotation Progress", min_value=0.0, max_value=1.0)}, disabled=True, use_container_width=True, key="m1_view")
-            for row in res_m1:
-                with st.expander(f"📋 Analysis: {row['Symbol']} — ({row['Status']})"):
-                    st.write(row["Detailed Description"])
-        else: st.warning("No assets cleared the strict IPO accumulation gates today.")
+            st.data_editor(pd.DataFrame(res_m1).drop(columns=["Detailed Description"]), use_container_width=True, disabled=True, key="m1_grid")
+        else: st.warning("No recent IPO layer entities matched within the current tuning parameters.")
 
-# --- TAB 2 ---
 with t2:
-    st.markdown('<div class="quant-container"><h3>💎 Mode 2: Business Owner Corporate Analytics Suite (Filtered)</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="quant-container"><h3>💎 Mode 2: Capital Value Systems (Nifty 250)</h3></div>', unsafe_allow_html=True)
     if st.button("Execute Corporate Fundamentals Sweep"):
-        res_m2, err_m2 = [], []
+        res_m2 = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-            f_dict = {ex.submit(run_mode_2_core, s): s for s in NIFTY_500_SEEDS}
+            f_dict = {ex.submit(run_mode_2_core, s): s for s in REAL_MARKET_UNIVERSE}
             for f in concurrent.futures.as_completed(f_dict):
-                r, e = f.result()
+                r, _ = f.result()
                 if r: res_m2.append(r)
-        
         if res_m2:
-            df2 = pd.DataFrame(res_m2)
-            st.data_editor(df2.drop(columns=["Detailed Description"]), column_config={"Promoter Lock %": st.column_config.ProgressColumn("Strong Hands Float Control", min_value=0.0, max_value=100.0)}, disabled=True, use_container_width=True, key="m2_view")
+            st.data_editor(pd.DataFrame(res_m2).drop(columns=["Detailed Description"]), use_container_width=True, disabled=True, key="m2_grid")
             for row in res_m2:
-                with st.expander(f"📋 Analysis: {row['Symbol']}"): st.write(row["Detailed Description"])
-        else: st.warning("No assets cleared the strict ROCE >= 20% & Debt <= 0.25 conditions.")
+                with st.expander(f"📋 Insights: {row['Symbol']}"): st.write(row["Detailed Description"])
+        else: st.warning("No Nifty 250 assets cleared the strict efficiency benchmarks.")
 
-# --- TAB 3 ---
 with t3:
-    st.markdown('<div class="quant-container"><h3>🎯 Mode 3: Price Action Volatility Contraction Pattern (Strict)</h3></div>', unsafe_allow_html=True)
-    if st.button("Execute High-Frequency VCP Squeeze Sweep"):
-        res_m3, err_m3 = [], []
+    st.markdown('<div class="quant-container"><h3>🎯 Mode 3: Intraday Price Action Squeeze (Nifty 250 Live)</h3></div>', unsafe_allow_html=True)
+    if st.button("Execute High-Frequency VCP Sweep"):
+        res_m3 = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-            f_dict = {ex.submit(run_mode_3_core, s): s for s in NIFTY_500_SEEDS}
+            f_dict = {ex.submit(run_mode_3_core, s): s for s in REAL_MARKET_UNIVERSE}
             for f in concurrent.futures.as_completed(f_dict):
-                r, e = f.result()
+                r, _ = f.result()
                 if r: res_m3.append(r)
-        
         if res_m3:
-            df3 = pd.DataFrame(res_m3)
-            st.data_editor(df3.drop(columns=["Detailed Description"]), disabled=True, use_container_width=True, key="m3_view")
+            st.data_editor(pd.DataFrame(res_m3).drop(columns=["Detailed Description"]), use_container_width=True, disabled=True, key="m3_grid")
             for row in res_m3:
-                with st.expander(f"📋 Analysis: {row['Symbol']}"): st.write(row["Detailed Description"])
-        else: st.warning("No assets currently match the sequential VCP wave rules ($T_1 > T_2 > T_3$).")
+                with st.expander(f"📋 Structure Proof: {row['Symbol']}"): st.write(row["Detailed Description"])
+        else: st.warning("No Nifty 250 components are currently printing tight compression envelopes.")
