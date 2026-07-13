@@ -5,11 +5,11 @@ import yfinance as yf
 import streamlit as st
 import google.generativeai as genai
 
-# SECURE ENVIROMENT FETCHING BINDING (SAFE FOR PUBLIC GITHUB REPOS)
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+# DIRECT CORE KEY MATRIX ROUTING BINDING
+GEMINI_API_KEY = "AQ.Ab8RN6LpBt8JfxnD_tZjED9gj8KINMWljkQsRIWxPIp7UbGawA"
 
-if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
-    st.sidebar.error("❌ AI Status: Secrets Key Not Found / TOML Syntax Error")
+if not GEMINI_API_KEY or "YOUR_API_KEY" in GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
+    st.sidebar.error("❌ AI Status: Code Core Key Missing / Empty String")
 else:
     st.sidebar.success("⚡ AI Status: Gemini Swarm Engine Fully Connected")
 
@@ -61,7 +61,7 @@ def run_ai_cognitive_agent(stock_data, context_tag):
             f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Live Price')}**."
         )
 
-    if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
+    if not GEMINI_API_KEY or "YOUR_API_KEY" in GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
         
     try:
@@ -92,6 +92,8 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         """
         response = model.generate_content(prompt)
         return response.text
-    except:
-        return fallback_analysis
+    except Exception as e:
+        # DIAGNOSTIC UPDATE: Printing the exact Google API error on the dashboard
+        error_msg = f"⚠️ **API CONNECTION ERROR**: {str(e)}"
+        return f"{error_msg}\n\n---\n\n{fallback_analysis}"
         
