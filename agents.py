@@ -67,9 +67,9 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     try:
         genai.configure(api_key=GEMINI_API_KEY)
         
-        # 🟢 UPGRADED STABLE GENERATION TARGET PIPELINE ROUTING
-        # gemini-2.5-flash standard routing handles endpoints restrictions flawlessly
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # 🟢 UNIVERSAL LATEST PRODUCTION STABLE ROUTING STRINGS
+        # Using production-ready global fallback mapping for strict legacy configurations compatibility
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
         
         prompt = f"""
         [SYSTEM ROLE DIRECTIVE & PRE-TRAINING TARGETS]:
@@ -98,4 +98,4 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     except Exception as e:
         error_msg = f"⚠️ **API CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
-        
+    
