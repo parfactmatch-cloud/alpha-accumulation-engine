@@ -89,4 +89,4 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         return response.text
     except:
         return fallback_analysis
-    
+        
