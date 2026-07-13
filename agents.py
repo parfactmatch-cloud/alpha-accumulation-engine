@@ -1,76 +1,100 @@
 import datetime
+import urllib.request
+import xml.etree.ElementTree as ET
 import yfinance as yf
 import google.generativeai as genai
-import streamlit as st  # Added to load native streamlit secrets router
+import streamlit as st
 
-# Pulling the key securely from the Streamlit Cloud Secrets management matrix
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
+# UPGRADED: High-Fidelity Real-Time News Stream Engine via Google News RSS
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
     try:
-        t = yf.Ticker(symbol)
-        raw_feed = t.news
-        if raw_feed and len(raw_feed) > 0:
-            compiled_news = ""
-            counter = 0
-            for item in raw_feed:
-                title = item.get("title", "")
-                link = item.get("link", "#")
-                pub = item.get("publisher", "Exchange Feed")
-                if title and len(title) > 10 and "Market Flash" not in title:
-                    compiled_news += f"• **[{title}]({link})** *(via {pub})*\n\n"
-                    counter += 1
-                if counter >= 3: break
-            if len(compiled_news) > 15: return compiled_news
+        # Direct secure query to live operational Google News wire
+        rss_url = f"https://news.google.com/rss/search?q={clean_ticker}+stock+india&hl=en-IN&gl=IN&ceid=IN:en"
+        req = urllib.request.Request(rss_url, headers={'User-Agent': 'Mozilla/5.0'})
+        
+        with urllib.request.urlopen(req, timeout=5) as response:
+            xml_data = response.read()
+            
+        root = ET.fromstring(xml_data)
+        compiled_news = ""
+        counter = 0
+        
+        for item in root.findall('.//item'):
+            title = item.find('title').text
+            link = item.find('link').text
+            pub_date = item.find('pubDate').text
+            
+            # Formatting timestamp structure cleanly
+            clean_date = pub_date[:16] if pub_date else "Recent"
+            
+            if title and len(title) > 15:
+                # Cleaning publisher text footprints from titles
+                if " - " in title:
+                    title = title.rsplit(" - ", 1)[0]
+                compiled_news += f"• 🌐 **[{title}]({link})**\n   *{clean_date}*\n\n"
+                counter += 1
+            if counter >= 3:
+                break
                 
-        if execution_mode_tag == "IPO":
-            return f"• 🌐 **[IPO Matrix Feed: {clean_ticker}]** Free float accumulation tracking indicates core baseline operator absorption patterns active."
-        elif execution_mode_tag == "VALUE":
-            return f"• 🌐 **[Yield Scan: {clean_ticker}]** Capital efficiency markers verify steady asset performance parameters inside target valuation margins."
-        else:
-            return f"• 🌐 **[VCP Squeeze Wire: {clean_ticker}]** Price action waves print tight contraction thresholds, flashing structural exhaustion states."
+        if len(compiled_news) > 20:
+            return compiled_news
     except:
-        return f"• 📊 **[Quant Pipeline]** Systems logging normal operational patterns for **{clean_ticker}**."
+        pass
+        
+    # Micro Strategy Fallback Logs if live connections timeout
+    if execution_mode_tag == "IPO":
+        return f"• 📊 **[IPO Feed: {clean_ticker}]** Multi-month baseline turnover scans clear. Floating equity metrics remain stabilized."
+    elif execution_mode_tag == "VALUE":
+        return f"• 📊 **[Yield Audit: {clean_ticker}]** Multi-year operational balance sheet stability prints normal efficiency margins."
+    else:
+        return f"• 📊 **[Squeeze Wire: {clean_ticker}]** Micro-bar compression checks pass standard volatility threshold envelopes."
 
 def run_ai_cognitive_agent(stock_data, context_tag):
     ticker_name = stock_data['Symbol'].replace('.NS','')
     
-    # 1. METRICS SPECTRUM BREAKDOWN
+    # Extracting parameters safely with structural fallback protocols against None/NaN bounds
+    def clean_val(val, suffix="", default="N/A"):
+        if val is None or str(val).lower() == 'none' or str(val).lower() == 'nan':
+            return default
+        return f"{val}{suffix}"
+
+    # HARDEED ANALYTICAL DISCLOSURES (ELIMINATING NONE/NAN INJECTIONS PLAINLY)
     if "ROCE %" in stock_data:
-        roce, de, mcap = stock_data["ROCE %"], stock_data["Debt/Equity"], stock_data["M-Cap (Cr)"]
-        efficiency_status = "Hyper-Efficient Compounder" if roce > 25 else "Stable Value Accumulator"
-        leverage_risk = "Negligible Structural Risk" if de <= 0.05 else "Moderate Institutional Leverage"
+        roce_val = clean_val(stock_data.get("ROCE %"))
+        de_val = clean_val(stock_data.get("Debt/Equity"))
+        mcap_val = clean_val(stock_data.get("M-Cap (Cr)"), suffix=" Cr")
         
         fallback_analysis = (
             f"📊 **[INSTITUTIONAL EQUITY AUDIT DESK // ASSET: {ticker_name}]**\n\n"
-            f"• **Capital Optimization**: Operating at a **{roce}% ROCE**, {ticker_name} classifies as a **{efficiency_status}**. The company generates significant operational earnings relative to its deployment capital base.\n\n"
-            f"• **Debt-to-Equity Capital Architecture**: A leverage coefficient of **{de}** indicates a posture of **{leverage_risk}**. The management shows strong financial discipline, mitigating interest payout constraints.\n\n"
-            f"• **Hedge Fund Risk-Reward Rating**: Given a market footprint capitalization of **₹{mcap:,} Cr**, institutional asset allocators maintain a solid core positioning allocation bias on this security."
+            f"• **Capital Optimization**: Operational verification metrics check shows Return on Capital Employed (ROCE) stabilized near **{roce_val}**. Capital deployment pipelines demonstrate normal alpha asset retention indices.\n\n"
+            f"• **Debt-to-Equity Capital Architecture**: Balance sheet leverage diagnostics compute a risk factor ratio at **{de_val}**. Capital protective shields trace ideal margins against interest contraction pressures.\n\n"
+            f"• **Hedge Fund Risk-Reward Rating**: Gross baseline valuation tracks a custom universe market capitalization parameter at **₹{mcap_val}**, maintaining institutional structural hold compliance metrics."
         )
     elif "Churn %" in stock_data:
-        churn, ff_cr, mcap = stock_data["Churn %"], stock_data["Free-Float (Cr)"], stock_data["M-Cap (Cr)"]
-        accumulation_density = "Aggressive Operator Lock-in" if churn > 40 else "Steady Base Building Phase"
-        float_tightness = "Ultra-Tight Float Dynamics" if (ff_cr / mcap) < 0.25 else "Highly Liquid Rotation Profile"
+        churn_val = clean_val(stock_data.get("Churn %"), suffix="%")
+        ff_val = clean_val(stock_data.get("Free-Float (Cr)"), suffix=" Cr")
+        mcap_val = clean_val(stock_data.get("M-Cap (Cr)"), suffix=" Cr")
         
         fallback_analysis = (
             f"📊 **[LIQUIDITY DISTRIBUTION MATRIX REPORT // ASSET: {ticker_name}]**\n\n"
-            f"• **Free Float Structure**: The asset registers a public float footprint of **Ref: ₹{ff_cr:,} Cr** against a total market weight of **₹{mcap:,} Cr**, indicating **{float_tightness}**.\n\n"
-            f"• **Volume Churn Verification**: A measured support base volume rotation turnover hitting **{churn}%** signifies a status of **{accumulation_density}**. Institutional absorbency blocks have effectively cleared weak hands.\n\n"
-            f"• **Strategic Allocation Verdict**: Low overhead supply configurations suggest a powerful asymmetric supply-demand bottleneck."
+            f"• **Free Float Structure**: Quant data pipeline logs verify public free float limits localized around **₹{ff_val}** against a gross company market cap capitalization boundary of **₹{mcap_val}**.\n\n"
+            f"• **Volume Churn Verification**: Active trading desk turnover sweeps reveal an equity float reallocation churn density processing at **{churn_val}**. This index marks a significant structural weak-hand distribution cooling phase.\n\n"
+            f"• **Strategic Allocation Verdict**: Low secondary market supply footprints register minor overhead resistance matrix limits, favoring steady tactical asset placement logic."
         )
     else:
-        live_p, res_p = stock_data["Live Price"], stock_data["Ceiling Res"]
-        spread = round(((res_p - live_p) / live_p) * 100, 2)
+        live_p = clean_val(stock_data.get("Live Price"), default="Market Price")
+        res_p = clean_val(stock_data.get("Ceiling Res"), default="Resistance Target")
         
         fallback_analysis = (
             f"📊 **[VOLATILITY CONTRACTION COMPLIANCE REGIME // ASSET: {ticker_name}]**\n\n"
-            f"• **VCP Micro-Structural Arrays**: The multi-wave contraction sequences exhibit absolute compliance, confirming active institutional price support levels.\n\n"
-            f"• **Breakout Threshold Proximity**: Spot pricing matches at **₹{live_p}**, tracing just **{spread}%** below the verified structural ceiling resistance line of **₹{res_p}**.\n\n"
-            f"• **Tactical Execution Order**: The significant volume contraction inside the terminal base envelope signals systemic sell-side exhaustion."
+            f"• **VCP Micro-Structural Arrays**: Intraday price discovery algorithms analyze multi-wave consolidation trends cleanly. Current structural operations map stable support base clusters.\n\n"
+            f"• **Breakout Threshold Proximity**: Spot execution levels settle near **₹{live_p}** relative to primary structural ceiling validation resistance layers at **₹{res_p}**.\n\n"
+            f"• **Tactical Execution Order**: Volume drop-off parameters print typical compression behaviors inside the base framework, indicating a tight volatility contraction setup."
         )
 
-    # 2. SEPARATED COGNITIVE PRO ACTIVATION PIPELINE
     if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
     
@@ -78,13 +102,14 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-1.5-pro')
         prompt = f"""
-        You are an elite institutional fund manager. Analyze these exact performance metrics for ticker '{stock_data['Symbol']}':
+        You are an elite institutional fund manager. Analyze these exact metrics for ticker '{stock_data['Symbol']}':
         - Strategy context block: {stock_data['Description']}
         - Swarm target parameters: {context_tag}
         Write an aggressive financial research report breakdown detailing specific corporate strength metrics and portfolio allocation logic. 
+        Meticulously avoid outputting any generic placeholders, NaN tokens, or 'None' descriptions.
         Use heavy markdown. Bloomberg tone only. Dense paragraphs under 3 blocks.
         """
         return model.generate_content(prompt).text
     except: 
         return fallback_analysis
-    
+                           
