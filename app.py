@@ -4,13 +4,10 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from agents import (
-    agent_ipo_analyst, 
-    agent_value_auditor, 
-    agent_vcp_scalper, 
-    run_ai_cognitive_agent, 
-    fetch_live_news_agent
-)
+from agents import run_ai_cognitive_agent, fetch_live_news_agent
+from mode1_ipo import execute_ipo_analysis
+from mode2_value import execute_value_audit
+from mode3_vcp import execute_vcp_scalp
 
 st.set_page_config(page_title="ALPHA QUANT TERMINAL", layout="wide", initial_sidebar_state="expanded")
 
@@ -36,17 +33,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; SWARM ADVANCED ENGINE ACTIVATED</span> | STRUCTURAL PIE INTEGRATION | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="terminal-nav"><span>&lt;GO&gt; SWARM SEPARATED REGIME STACK</span> | HIGH-PRECISION VISUAL MATRIX | <span>TIME: {datetime.datetime.now().strftime("%H:%M:%S")}</span></div>', unsafe_allow_html=True)
 st.title("🎛️ ALPHA MULTI-AGENT SWARM TERMINAL")
 st.caption("AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL")
 
-# ==============================================================================
-# CLEAN SIDEBAR PANEL CONTROL
-# ==============================================================================
 st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>🎯 MANUAL STOCK SEARCH</h3>", unsafe_allow_html=True)
 MANUAL_INPUT = st.sidebar.text_input("Add Custom Ticker", "", key="master_ticker_search_box").strip().upper()
 
-st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>⚙ arrow_drop_down STRATEGY REGIME RULES</h3>", unsafe_allow_html=True)
+st.sidebar.markdown("<h3 style='color:#ff9800; font-size:14px;'>⚙️ STRATEGY REGIME RULES</h3>", unsafe_allow_html=True)
 MIN_MARKET_CAP_CR = st.sidebar.number_input("MIN MCAP GATE (CR)", value=1000, key="mcap_num_gate")
 MAX_IPO_AGE_YEARS = st.sidebar.slider("MAX IPO AGE WINDOW", 1, 10, 7, key="ipo_age_slider")
 TARGET_ABSORPTION_PCT = st.sidebar.slider("TARGET FLOAT CHURN (%)", 10, 100, 30, key="churn_slider")
@@ -63,27 +57,13 @@ def render_equity_pie_chart(target_data):
         total_s = float(target_data.get("TotalShares", 100))
         promoter_s = max(0.0, total_s - float_s)
         
-        labels = ['Public Free Float Shares', 'Promoter / Locked Shares']
-        sizes = [float_s, promoter_s]
-        colors = ['#ff9800', '#242b35']
-        
         fig, ax = plt.subplots(figsize=(5, 4))
         fig.patch.set_facecolor('#121620')
         ax.set_facecolor('#121620')
-        
-        wedges, texts, autotexts = ax.pie(
-            sizes, labels=labels, autopct='%1.1f%%',
-            startangle=140, colors=colors,
-            textprops=dict(color="#d1d4dc", fontfamily='monospace', fontsize=9)
-        )
-        for autotext in autotexts:
-            autotext.set_color('#0b0c10')
-            autotext.set_weight('bold')
-            
+        ax.pie([float_s, promoter_s], labels=['Free Float', 'Promoter Block'], autopct='%1.1f%%', startangle=140, colors=['#ff9800', '#242b35'], textprops=dict(color="#d1d4dc", fontfamily='monospace', fontsize=9))
         ax.axis('equal')
         st.pyplot(fig)
-    except:
-        st.error("📊 System failed mapping structural float boundaries.")
+    except: st.error("📊 Float calculation vector mismatch.")
 
 tab1, tab2, tab3 = st.tabs(["[ MODE 1: IPO CORE ]", "[ MODE 2: VALUE OWNER ]", "[ MODE 3: INTRADAY VCP ]"])
 
@@ -92,7 +72,7 @@ with tab1:
     if st.button("EXECUTE IPO SWEEP", key="btn_m1"):
         with st.spinner("Processing..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-                futures = [ex.submit(agent_ipo_analyst, s, MAX_IPO_AGE_YEARS, MIN_MARKET_CAP_CR, TARGET_ABSORPTION_PCT) for s in BASE_UNIVERSE]
+                futures = [ex.submit(execute_ipo_analysis, s, MAX_IPO_AGE_YEARS, MIN_MARKET_CAP_CR, TARGET_ABSORPTION_PCT) for s in BASE_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res: st.session_state["res_m1"], st.session_state["df_m1"] = res, pd.DataFrame(res).drop(columns=["Description", "FloatShares", "TotalShares"])
             
@@ -104,12 +84,10 @@ with tab1:
             
             st.markdown(f'<div class="console-box"> 📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {clean_name}</b></div>', unsafe_allow_html=True)
             c1, c2 = st.columns([1, 1])
-            with c1:
-                st.markdown("### 📊 Asset Equity Structure Breakdown:")
-                render_equity_pie_chart(target)
+            with c1: render_equity_pie_chart(target)
             with c2:
                 st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "IPO Consolidation Dynamic Matrix Strategy"))
+                st.markdown(run_ai_cognitive_agent(target, "IPO Core Regime Logic"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'IPO')}")
 
@@ -118,7 +96,7 @@ with tab2:
     if st.button("EXECUTE RATIOS SWEEP", key="btn_m2"):
         with st.spinner("Processing..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-                futures = [ex.submit(agent_value_auditor, s, MIN_MARKET_CAP_CR) for s in BASE_UNIVERSE]
+                futures = [ex.submit(execute_value_audit, s, MIN_MARKET_CAP_CR) for s in BASE_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res: st.session_state["res_m2"], st.session_state["df_m2"] = res, pd.DataFrame(res).drop(columns=["Description", "FloatShares", "TotalShares"])
             
@@ -130,12 +108,10 @@ with tab2:
             
             st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {clean_name}</b></div>', unsafe_allow_html=True)
             c1, c2 = st.columns([1, 1])
-            with c1:
-                st.markdown("### 📊 Asset Equity Structure Breakdown:")
-                render_equity_pie_chart(target)
+            with c1: render_equity_pie_chart(target)
             with c2:
                 st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "Long-Term Value Moats Structuring"))
+                st.markdown(run_ai_cognitive_agent(target, "Fundamental Moats Auditor"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'VALUE')}")
 
@@ -144,7 +120,7 @@ with tab3:
     if st.button("EXECUTE SCALPER SWEEP", key="btn_m3"):
         with st.spinner("Processing..."):
             with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-                futures = [ex.submit(agent_vcp_scalper, s) for s in BASE_UNIVERSE]
+                futures = [ex.submit(execute_vcp_scalp, s) for s in BASE_UNIVERSE]
                 res = [f.result() for f in concurrent.futures.as_completed(futures) if f.result() is not None]
         if res: st.session_state["res_m3"], st.session_state["df_m3"] = res, pd.DataFrame(res).drop(columns=["Description", "FloatShares", "TotalShares"])
             
@@ -156,12 +132,10 @@ with tab3:
             
             st.markdown(f'<div class="console-box">📊 <b style="color:#ff9800;">UNIFIED INTELLIGENCE PANEL // ASSET: {clean_name}</b></div>', unsafe_allow_html=True)
             c1, c2 = st.columns([1, 1])
-            with c1:
-                st.markdown("### 📊 Asset Equity Structure Breakdown:")
-                render_equity_pie_chart(target)
+            with c1: render_equity_pie_chart(target)
             with c2:
                 st.markdown(f"### 🎯 Swarm Intel Performance Analysis Vector ({clean_name}):")
-                st.markdown(run_ai_cognitive_agent(target, "Intraday Volatility Bottleneck Exhaustion Sequence"))
+                st.markdown(run_ai_cognitive_agent(target, "Intraday VCP Squeeze Engine"))
                 st.markdown(f"### 📁 Institutional Reports ({clean_name}):\n<a href='https://www.screener.in/company/{clean_name}/' target='_blank' class='report-link'>📂 Open Screener.in Profile Matrix ↗</a>", unsafe_allow_html=True)
                 st.markdown(f"### 📰 Real-Time Corporate News:\n{fetch_live_news_agent(target['Symbol'], 'VCP')}")
-        
+
