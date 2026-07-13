@@ -4,22 +4,18 @@ import pandas as pd
 import yfinance as yf
 import google.generativeai as genai
 
-# ==============================================================================
-# AGENT 1: STABILIZED DATA & NEWS INGESTION LAYER
-# ==============================================================================
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
     try:
         t = yf.Ticker(symbol)
         raw_feed = t.news
-        
         if raw_feed and len(raw_feed) > 0:
             compiled_news = ""
             counter = 0
             for item in raw_feed:
                 title = item.get("title", "")
                 link = item.get("link", "#")
-                pub = item.get("publisher", "Market News Wire")
+                pub = item.get("publisher", "Market Wire")
                 if title and len(title) > 10 and "Market Flash" not in title:
                     compiled_news += f"• **[{title}]({link})** *(via {pub})*\n\n"
                     counter += 1
@@ -37,16 +33,12 @@ def fetch_live_news_agent(symbol, execution_mode_tag):
     except:
         return f"• 📊 **[Quant Pipeline]** Systems logging normal operational patterns for **{clean_ticker}**."
 
-# ==============================================================================
-# AGENT 2: PRO-GRADE COGNITIVE AI FORECASTER (DEEP SPECIFIED INDICES)
-# ==============================================================================
 def run_ai_cognitive_agent(stock_data, context_tag, api_key):
-    if not api_key:
-        return "⚠️ **AI Engine Idle:** Paste your Google Gemini API Key in the sidebar control box to unlock live institutional intelligence forecasting summaries."
+    if not api_key or len(api_key) < 5:
+        return "⚠️ **AI Engine Idle:** Please enter a valid Gemini API Key in the top configuration block to stream premium automated analytics."
     
     try:
         genai.configure(api_key=api_key)
-        # Using your premium tier model for enhanced financial breakdown analysis
         model = genai.GenerativeModel('gemini-1.5-pro')
         
         prompt = f"""
@@ -59,16 +51,13 @@ def run_ai_cognitive_agent(stock_data, context_tag, api_key):
         1. **Quant Verification Breakdown**: What does the current numeric structure imply about asset positioning?
         2. **Portfolio Alpha Assessment**: A precise thesis on why an elite trader should include or avoid this asset.
         
-        Keep your structure clean, analytical, direct, and formatted in bold professional Markdown. Keep it strictly to the point under 3 paragraphs.
+        Keep your structure clean, analytical, direct, and formatted in bold professional Markdown. Keep it strictly to the point under 3 paragraphs. Do not mention anything about limits or api setup.
         """
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
         return f"⚠️ **AI Agent Communication Error:** {str(e)}"
 
-# ==============================================================================
-# AGENT 3: STRATEGY CORE EXECUTORS (IPO, VALUE, VCP)
-# ==============================================================================
 def agent_ipo_analyst(symbol, max_age, min_mcap, target_churn):
     try:
         t = yf.Ticker(symbol)
@@ -152,8 +141,7 @@ def agent_vcp_scalper(symbol):
         
         if not (d1 >= d2 and d2 >= d3): return None
         
-        desc = f"Volatility compression algorithm matched structural envelope triggers. Multi-wave compression array measurements print as follows: Wave 1 Depth={d1:.2f}% -> Wave 2 Depth={d2:.2f}% -> Wave 3 Depth={d3:.2f}%."
+        desc = f"Volatility contraction sequence matched structural envelope triggers. Multi-wave compression array measurements print as follows: Wave 1 Depth={d1:.2f}% -> Wave 2 Depth={d2:.2f}% -> Wave 3 Depth={d3:.2f}%."
         
         return {"Symbol": symbol, "Live Price": round(price, 2), "Ceiling Res": round(r_max, 2), "W1 %": round(d1, 2), "W2 %": round(d2, 2), "Status": "🟢 COMPLIANT", "Description": desc}
     except: return None
-
