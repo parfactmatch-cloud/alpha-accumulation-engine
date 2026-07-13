@@ -5,35 +5,65 @@ import streamlit as st
 import yfinance as yf
 
 # ==============================================================================
-# ENGINE DASHBOARD HEADERS & CONFIGURATIONS
+# PREMIUM FINANCIAL ENGINE CONFIGURATION & THEME FIXES
 # ==============================================================================
 st.set_page_config(
-    page_title="Alpha-Accumulation Engine Pro",
+    page_title="Alpha-Accumulation Suite Pro",
     layout="wide",
     initial_sidebar_state="expanded",
+)
+
+# Custom Premium CSS Inject for Dark Theme Polish
+st.markdown(
+    """
+    <style>
+    div[data-testid="stMetric"] {
+        background-color: #1e222d;
+        border: 1px solid #2a2e39;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+    div[data-testid="stExpander"] {
+        border: 1px solid #ff4b4b44;
+        background-color: #1a1010;
+    }
+    .stButton>button {
+        width: 100%;
+        background-color: #2962ff !important;
+        color: white !important;
+        font-weight: bold;
+        border-radius: 8px;
+        border: none;
+        padding: 10px;
+        transition: 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #1e4bd8 !important;
+        transform: scale(1.01);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.title("🏗️ Alpha-Accumulation Suite (Upgraded Edition)")
 st.caption("Quantitative Screening Suite | Enhanced Institutional Float Filters")
 
 # ==============================================================================
-# SIDEBAR CONFIGURATION SWITCHES (DYNAMIC CONTROLS)
+# SIDEBAR TUNING CONTROLS
 # ==============================================================================
 st.sidebar.header("🔧 Dynamic Engine Tuning")
 MIN_MARKET_CAP_CR = st.sidebar.number_input(
     "Minimum Market Cap Requirement (Cr)", value=1000
 )
-
-# Fix: Slider default value set to 7 Years to naturally include 2020-2021 hyper-turnarounds
 MAX_IPO_AGE_YEARS = st.sidebar.slider(
     "Maximum IPO Listing Age Filter (Years)", min_value=1, max_value=10, value=7
 )
-
 TARGET_ABSORPTION_PCT = st.sidebar.slider(
     "Target Retail Free-Float Churn (%)", min_value=10, max_value=100, value=30
 )
 
-# High-Velocity Core Universe Seed Arrays
 NIFTY_500_SEEDS = [
     "PAYTM.NS",
     "ZOMATO.NS",
@@ -48,25 +78,21 @@ NIFTY_500_SEEDS = [
 ]
 
 # ==============================================================================
-# CORE ENGINE FUNCTION BLOCKS
+# CORE DATA PROCESSING ENGINES
 # ==============================================================================
 
 
 def execute_upgraded_ipo_logic(ticker_symbol):
-    """
-    MODE 1: Institutional Free-Float Absorption Engine (Now with 7-Year Optimized Window)
-    """
     try:
         ticker = yf.Ticker(ticker_symbol)
         max_history = ticker.history(period="max")
         if max_history.empty:
             return None, f"No history available for {ticker_symbol}"
 
-        # Dynamic Age Calculation Protocol
         first_trade_date = max_history.index[0].date()
         days_since_listing = (datetime.date.today() - first_trade_date).days
         if days_since_listing > (MAX_IPO_AGE_YEARS * 365):
-            return None, None  # Gracefully drops legacy setups
+            return None, None
 
         df = max_history.tail(int(MAX_IPO_AGE_YEARS * 250))
         if len(df) < 200:
@@ -89,10 +115,8 @@ def execute_upgraded_ipo_logic(ticker_symbol):
         if current_mcap_cr < MIN_MARKET_CAP_CR:
             return None, None
 
-        # Public Free-Float Capitalization
         free_float_mcap_cr = (float_shares * current_price) / 10_000_000
 
-        # Mathematical Indicators Layer
         df["100_DMA"] = df["Close"].rolling(window=100).mean()
         df["200_DMA"] = df["Close"].rolling(window=200).mean()
         df["7_DMA"] = df["Close"].rolling(window=7).mean()
@@ -100,19 +124,16 @@ def execute_upgraded_ipo_logic(ticker_symbol):
             window=20
         ).sum() / df["Volume"].rolling(window=20).sum()
 
-        # Dynamic Base Value Calculation Window
         lowest_price = df["Close"].min()
         base_window = df[df["Close"] <= lowest_price * 1.25]
         total_traded_at_base_cr = (
             base_window["Volume"] * base_window["Close"]
         ).sum() / 10_000_000
 
-        # Retail Float Churn Ratio
         absorption_float_pct = (
             total_traded_at_base_cr / free_float_mcap_cr
         ) * 100
 
-        # Rules Verification Array Gates
         gate_volume = absorption_float_pct >= TARGET_ABSORPTION_PCT
         gate_trend = df["100_DMA"].iloc[-1] > df["200_DMA"].iloc[-1]
         above_vwap = current_price > df["VWAP_20d"].iloc[-1]
@@ -120,7 +141,7 @@ def execute_upgraded_ipo_logic(ticker_symbol):
             df["7_DMA"].iloc[-1] > df["100_DMA"].iloc[-1]
         )
 
-        status = "WATCHLIST (Squeezing Float)"
+        status = "WATCHLIST (Squeezing)"
         if gate_trend and gate_volume and above_vwap:
             status = (
                 "🔥 BUY TRIGGER ACTIVE" if gate_trigger else "🟢 TREND CONFIRMED"
@@ -128,10 +149,12 @@ def execute_upgraded_ipo_logic(ticker_symbol):
 
         return {
             "Ticker": ticker_symbol.replace(".NS", ""),
-            "Price": round(current_price, 2),
+            "Price (₹)": round(current_price, 2),
             "Market Cap (Cr)": round(current_mcap_cr, 2),
             "Free-Float Cap (Cr)": round(free_float_mcap_cr, 2),
-            "Float Absorption %": round(absorption_float_pct, 2),
+            "Float Absorption %": min(
+                round(absorption_float_pct, 2) / 100.0, 1.0
+            ),  # Scaled for modern progress bar
             "Status": status,
             "Intraday SL (5%)": round(current_price * 0.95, 2),
             "Target (10%)": round(current_price * 1.10, 2),
@@ -141,11 +164,6 @@ def execute_upgraded_ipo_logic(ticker_symbol):
             None,
             f"Exception in Upgraded Mode 1 for {ticker_symbol}: {str(e)}",
         )
-
-
-# ==============================================================================
-# VALUE-OWNER & INTRADAY VCP FUNCTIONS
-# ==============================================================================
 
 
 def execute_value_owner_logic(ticker_symbol):
@@ -229,7 +247,6 @@ def execute_value_owner_logic(ticker_symbol):
                 "Debt/Equity": round(debt_to_equity, 2),
                 "Promoter Lock %": round(promoter_lock_pct, 2),
                 "Div Yield %": round(dividend_yield, 2),
-                "Pct from 200DMA": round(pct_from_200dma, 2),
                 "Status": status,
             }, None
         return None, None
@@ -287,14 +304,10 @@ def execute_intraday_vcp_logic(ticker_symbol):
             return {
                 "Ticker": ticker_symbol.replace(".NS", ""),
                 "Price": round(current_price, 2),
-                "Ceiling Res": round(r_max, 2),
+                "Status": status,
                 "T1 Depth %": round(depth_t1, 2),
                 "T2 Depth %": round(depth_t2, 2),
                 "T3 Depth %": round(depth_t3, 2),
-                "BB Bandwidth": round(df["Bandwidth"].iloc[-1], 4),
-                "Status": status,
-                "Intraday SL (5%)": round(current_price * 0.95, 2),
-                "Target (10%)": round(current_price * 1.10, 2),
             }, None
         return None, None
     except Exception as e:
@@ -302,7 +315,7 @@ def execute_intraday_vcp_logic(ticker_symbol):
 
 
 # ==============================================================================
-# UI ROUTINES
+# MAIN TAB VIEW & RENDER ENGINE
 # ==============================================================================
 tab1, tab2, tab3 = st.tabs(
     [
@@ -313,10 +326,12 @@ tab1, tab2, tab3 = st.tabs(
 )
 
 with tab1:
-    st.header("IPO Turnaround Engine (7-Year Active Scope)")
-    if st.button("Execute Upgraded IPO Scan"):
+    st.subheader("IPO Turnaround Dashboard")
+
+    if st.button("🔥 Run Upgraded IPO Float Scan"):
         results_tab1, errors_tab1 = [], []
         progress1 = st.progress(0)
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
             futures = {
                 executor.submit(execute_upgraded_ipo_logic, t): t
@@ -331,36 +346,85 @@ with tab1:
                 if err:
                     errors_tab1.append(err)
                 progress1.progress((idx + 1) / len(NIFTY_500_SEEDS))
+
+        # Modern UI Block 1: Real-time Metric Cards Overview
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.metric(label="Total Scanned Tickers", value=len(NIFTY_500_SEEDS))
+        with c2:
+            actives = sum(
+                1 for x in results_tab1 if "ACTIVE" in x.get("Status", "")
+            )
+            st.metric(
+                label="Active Action Signals",
+                value=actives,
+                delta=f"{actives} Triggered",
+            )
+        with c3:
+            st.metric(label="Data API Exclusions", value=len(errors_tab1))
+
+        st.write("---")
+
         if results_tab1:
             df1 = pd.DataFrame(results_tab1)
-            st.dataframe(df1, use_container_width=True)
-        if errors_tab1:
-            with st.expander("⚠️ Upgraded Mode 1 Diagnostics"):
-                for error in errors_tab1:
-                    st.write(error)
 
+            # Modern UI Block 2: Interactive column configuration with Progress Bars & Tags
+            st.data_editor(
+                df1,
+                column_config={
+                    "Ticker": st.column_config.TextColumn(
+                        "Symbol", help="Stock Ticker Code"
+                    ),
+                    "Price (₹)": st.column_config.NumberColumn(
+                        "Last Price", format="₹%.2f"
+                    ),
+                    "Float Absorption %": st.column_config.ProgressColumn(
+                        "Float Churn Ratio",
+                        help="Turnover relative to free float",
+                        format="%.2f",
+                        min_value=0.0,
+                        max_value=1.0,
+                    ),
+                    "Status": st.column_config.SelectboxColumn(
+                        "Signal Status",
+                        options=[
+                            "🔥 BUY TRIGGER ACTIVE",
+                            "🟢 TREND CONFIRMED",
+                            "WATCHLIST (Squeezing)",
+                        ],
+                    ),
+                },
+                disabled=True,
+                use_container_width=True,
+                key="ipo_editor",
+            )
+        else:
+            st.warning("No tickers matched float criteria.")
+
+        if errors_tab1:
+            st.write("")
+            with st.expander("⚠️ Pipeline Real-time Data Diagnostics"):
+                for error in errors_tab1:
+                    st.markdown(f"• `{error}`")
+
+# [Tab 2 & Tab 3 configurations run side-by-side cleanly]
 with tab2:
     st.header("Fundamental Value-Owner Monitor")
     if st.button("Execute Fundamental Value Scan"):
         results_tab2, errors_tab2 = [], []
-        progress2 = st.progress(0)
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
             futures = {
                 executor.submit(execute_value_owner_logic, t): t
                 for t in NIFTY_500_SEEDS
             }
-            for idx, future in enumerate(
-                concurrent.futures.as_completed(futures)
-            ):
+            for future in concurrent.futures.as_completed(futures):
                 res, err = future.result()
                 if res:
                     results_tab2.append(res)
                 if err:
                     errors_tab2.append(err)
-                progress2.progress((idx + 1) / len(NIFTY_500_SEEDS))
         if results_tab2:
-            df2 = pd.DataFrame(results_tab2)
-            st.dataframe(df2, use_container_width=True)
+            st.dataframe(pd.DataFrame(results_tab2), use_container_width=True)
         if errors_tab2:
             with st.expander("⚠️ Mode 2 Diagnostics"):
                 for error in errors_tab2:
@@ -370,24 +434,19 @@ with tab3:
     st.header("Intraday Volatility Contraction Pattern (VCP) Screener")
     if st.button("Execute Live VCP Squeeze Scan"):
         results_tab3, errors_tab3 = [], []
-        progress3 = st.progress(0)
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
             futures = {
                 executor.submit(execute_intraday_vcp_logic, t): t
                 for t in NIFTY_500_SEEDS
             }
-            for idx, future in enumerate(
-                concurrent.futures.as_completed(futures)
-            ):
+            for future in concurrent.futures.as_completed(futures):
                 res, err = future.result()
                 if res:
                     results_tab3.append(res)
                 if err:
                     errors_tab3.append(err)
-                progress3.progress((idx + 1) / len(NIFTY_500_SEEDS))
         if results_tab3:
-            df3 = pd.DataFrame(results_tab3)
-            st.dataframe(df3, use_container_width=True)
+            st.dataframe(pd.DataFrame(results_tab3), use_container_width=True)
         if errors_tab3:
             with st.expander("⚠️ Mode 3 Diagnostics"):
                 for error in errors_tab3:
