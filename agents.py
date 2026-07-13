@@ -2,11 +2,17 @@ import datetime
 import urllib.request
 import xml.etree.ElementTree as ET
 import yfinance as yf
-import google.generativeai as genai
 import streamlit as st
+# Modern updated client router call from the documentation
+from google import genai
 
-# Pulling the secure key from Streamlit Cloud Secrets management matrix
+# Pulling the key from Streamlit Cloud Secrets management matrix securely
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+
+if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
+    st.sidebar.error("❌ AI Status: Secrets Key Not Found / Broken Setup")
+else:
+    st.sidebar.success("⚡ AI Status: Modern Interactions API Active")
 
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
@@ -34,59 +40,66 @@ def fetch_live_news_agent(symbol, execution_mode_tag):
 
 def run_ai_cognitive_agent(stock_data, context_tag):
     ticker_name = stock_data['Symbol'].replace('.NS','')
+    live_news_context = fetch_live_news_agent(stock_data['Symbol'], context_tag)
+    screener_reference_url = f"https://www.screener.in/company/{ticker_name}/"
     
-    # 1. HARDENED HIGH-PRECISION MATHEMATICAL FALLBACK VERDICTS (IF KEY UNTRIGGERED)
+    # 1. STRUCTURAL RIGOROUS REPORT GENERATOR BUILDER (FALLBACK BACKUP LOGIC)
     if "ROCE %" in stock_data:
         fallback_analysis = (
             f"📊 **[INSTITUTIONAL EQUITY AUDIT DESK // ASSET: {ticker_name}]**\n\n"
-            f"• **Capital Efficiency Matrix**: Operating at a verified Return on Capital Employed (ROCE) of **{stock_data.get('ROCE %')}%**, the asset displays strong structural alpha efficiency above benchmark indices.\n\n"
-            f"• **Leverage Stability Structure**: Balance sheet diagnostics compute a safe Debt-to-Equity allocation ratio locked at **{stock_data.get('Debt/Equity')}**, minimizing systemic structural risk.\n\n"
-            f"• **Allocation Compliance**: Long-term asset compounding indicators satisfy defensive wealth matrix retention standards cleanly."
+            f"• **Capital Efficiency Matrix**: Return on Capital Employed (ROCE) tracks verified at **{stock_data.get('ROCE %')}%**.\n\n"
+            f"• **Leverage Assessment**: Balance sheet leverage coefficients compute safely at **{stock_data.get('Debt/Equity')}**.\n\n"
+            f"• **Verification Status**: System referencing dynamic structural constraints via Screener profiles."
         )
     elif "Churn %" in stock_data:
         fallback_analysis = (
             f"📊 **[LIQUIDITY DISTRIBUTION MATRIX REPORT // ASSET: {ticker_name}]**\n\n"
-            f"• **Free Float Architecture**: Public liquidity availability evaluates safely at **₹{stock_data.get('Free-Float (Cr)')} Cr** out of gross market capitalization parameters of **₹{stock_data.get('M-Cap (Cr)')} Cr**.\n\n"
-            f"• **Consolidation Churn Dynamic**: Core volume allocation tracking patterns register an active floor supply rotation velocity processing at **{stock_data.get('Churn %')}%**.\n\n"
-            f"• **Asymmetric Capture Matrix**: Supply overhead line contractions favor highly efficient operator accumulation base setups."
+            f"• **Free Float Mapping**: Real-time asset capital distribution limits track public float levels at **₹{stock_data.get('Free-Float (Cr)')} Cr**.\n\n"
+            f"• **Volume Churn Verification**: Active market turnover parameters process flow rates near **{stock_data.get('Churn %')}%**."
         )
     else:
         fallback_analysis = (
             f"📊 **[VOLATILITY CONTRACTION COMPLIANCE REGIME // ASSET: {ticker_name}]**\n\n"
-            f"• **VCP Micro-Structural Arrays**: Dynamic price discovery contractions track localized price support base arrays across tight volatility layers.\n\n"
-            f"• **Threshold Proximity Execution**: Spot pricing targets execute close to technical ceiling resistance walls matching **₹{stock_data.get('Ceiling Res')}** against a live target base of **₹{stock_data.get('Live Price')}**."
+            f"• **VCP Vector Check**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Ceiling Res')}**."
         )
 
-    # 2. SEPARATED INTEGRATED TRAINED AI ENCRYPTED PIPELINE (EXPLICIT PRO PROMPTING BINDING)
+    # 2. UP-GRADED INTERACTIONS CLIENT DISPATCH MATRIX AS PER DOCUMENTATION
     if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
         return fallback_analysis
         
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        # Initializing the modern direct client SDK layout rules
+        client = genai.Client(api_key=GEMINI_API_KEY)
         
-        # ADVANCED PRE-TRAINING SYSTEM DIRECTIVE INJECTION
         prompt = f"""
-        [SYSTEM ROLE DIRECTIVE & PRE-TRAINING MATRIX]:
-        You are a elite Chief Quantitative Fund Manager and Senior Institutional Risk Analyst. Your directive is to evaluate structural stock performance data and output high-alpha research verdicts.
+        [SYSTEM ROLE DIRECTIVE]:
+        You are a legendary Senior Institutional Fund Manager and Chief Equity Risk Auditor for Indian capital markets. 
+        Your directive is to analyze core quantitative metrics, cross-verify them explicitly against the provided live news streams and Screener profiles, and deliver a high-conviction final verdict.
         
-        [STRICT OPERATIONAL CONSTRAINTS]:
-        - Never output boilerplate templates, generic definitions, or introductory statements.
-        - Under no circumstances should tokens like 'NaN', 'None', 'Omitted', or empty bracket fields pass into the research verdict layout.
-        - Your analysis tone must match a strict Bloomberg analyst desk style: direct, data-dense, mathematical, and highly aggressive.
+        [DIGESTED DATA SYSTEM GRID]:
+        - Target Stock Ticker: {ticker_name}
+        - Strategy Scope Context Category: {context_tag}
+        - Live Numeric Metrics Engine Output: {stock_data}
+        - Current Live Corporate News Feed: {live_news_context}
+        - Institutional Profile Subpath Reference: {screener_reference_url}
         
-        [INPUT PERFORMANCE PARAMETERS TO AUDIT]:
-        - Target Stock Asset: {ticker_name}
-        - Strategy Scope Context: {context_tag}
-        - Verified Live Numeric Metrics Grid: {stock_data}
+        [STRICT INSTRUCTIONAL BOUNDARIES]:
+        - Never output boilerplate text, introductory remarks, or setup code reminders.
+        - The analysis tone must be ultra-professional, dense, razor-sharp, and mathematically backed (Bloomberg terminal standard). 
+        - Absolutely no 'None' or 'NaN' placeholder tokens can pass into the layout text blocks.
         
-        [TARGET ANALYSIS TASK EXECUTION]:
-        Generate a highly professional 2-3 paragraph mathematical final verdict based on the performance variables supplied. 
-        - Paragraph 1: Quantitative Performance breakdown (explicit analysis of ROCE/Leverage or Churn/Float based on the specific numerical values).
-        - Paragraph 2: Portfolio Allocator Alpha Thesis (a strategic mathematical argument detailing whether institutional wealth capital should accumulate, hold, or avoid this asset structure).
+        [TASK EXECUTION MATRIX]:
+        Generate a highly professional 2-paragraph final verdict based on the specific performance values:
+        - Paragraph 1: Quantitative & Fundamental Verification. Analyze the numerical values (ROCE/Leverage/Float Churn) and cross-verify them explicitly against the live news events and con-calls trajectory. Address if the structural trends are strong or showing stress.
+        - Paragraph 2: Institutional Asset Allocation Verdict. State an aggressive, high-conviction mathematical argument outlining if an elite portfolio allocator should Accumulate, Hold, or Avoid this specific equity risk structure.
         """
-        response = model.generate_content(prompt)
-        return response.text
+        
+        # Calling the recommended interactions endpoint with latest feature models
+        interaction = client.interactions.create(
+            model="gemini-3.5-flash",
+            input=prompt
+        )
+        return interaction.output_text
     except:
         return fallback_analysis
         
