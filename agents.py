@@ -5,7 +5,7 @@ import yfinance as yf
 import streamlit as st
 import google.generativeai as genai
 
-# 🔐 ABSOLUTE PRODUCTION SECURITY BINDING - REPO SAFE ARCHITECTURE
+# 🔐 SECURE ENVIRONMENT FETCHING (100% GITHUB PUBLIC REPO COMPLIANT)
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
@@ -65,9 +65,13 @@ def run_ai_cognitive_agent(stock_data, context_tag):
         return fallback_analysis
         
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        # Bounded calibration targeting stable production flash configurations
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # BINDING: Setting explicit system transport credentials options for auth tokens handling
+        genai.configure(api_key=GEMINI_API_KEY, client_options={"api_endpoint": "generativelanguage.googleapis.com"})
+        
+        # Explicit routing configuration utilizing the modern model endpoint setup
+        model = genai.GenerativeModel(
+            model_name='gemini-1.5-flash'
+        )
         
         prompt = f"""
         [SYSTEM ROLE DIRECTIVE & PRE-TRAINING TARGETS]:
@@ -96,4 +100,4 @@ def run_ai_cognitive_agent(stock_data, context_tag):
     except Exception as e:
         error_msg = f"⚠️ **API CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
-      
+            
