@@ -3,15 +3,16 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import yfinance as yf
 import streamlit as st
-import google.generativeai as genai
+import http.client
+import json
 
-# 🔐 SECURE ENVIRONMENT BINDING (SAFE FOR PUBLIC GITHUB REPOS)
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+# 🔐 SECURE GROQ ENVIROMENT FETCHING (100% GITHUB PUBLIC REPO COMPLIANT)
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
 
-if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
-    st.sidebar.error("❌ AI Status: Secrets Key Not Found / TOML Syntax Error")
+if not GROQ_API_KEY or len(GROQ_API_KEY) < 5:
+    st.sidebar.error("❌ AI Status: Groq API Key Missing in Secrets")
 else:
-    st.sidebar.success("⚡ AI Status: Gemini Swarm Engine Fully Connected")
+    st.sidebar.success("⚡ AI Status: Ultra-Fast Groq Engine Active")
 
 def fetch_live_news_agent(symbol, execution_mode_tag):
     clean_ticker = symbol.replace(".NS", "").strip().upper()
@@ -61,41 +62,48 @@ def run_ai_cognitive_agent(stock_data, context_tag):
             f"• **VCP Micro-Structural Arrays**: Price spot contractions track localized support zones near technical ceiling markers at **₹{stock_data.get('Live Price')}**."
         )
 
-    if not GEMINI_API_KEY or len(GEMINI_API_KEY) < 5:
+    if not GROQ_API_KEY or len(GROQ_API_KEY) < 5:
         return fallback_analysis
         
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        
-        # 🟢 UNIVERSAL LATEST PRODUCTION STABLE ROUTING STRINGS
-        # Using production-ready global fallback mapping for strict legacy configurations compatibility
-        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        # Standard HTTP library call for absolute stability (No SDK dependency crash)
+        conn = http.client.HTTPSConnection("api.groq.com")
         
         prompt = f"""
-        [SYSTEM ROLE DIRECTIVE & PRE-TRAINING TARGETS]:
-        You are a legendary Senior Institutional Fund Manager and Chief Equity Research Auditor for Indian capital markets. 
-        Your directive is to analyze core quantitative metrics, cross-verify them explicitly against the provided live news streams and Screener profiles, and deliver a high-conviction final verdict.
+        You are a Senior Institutional Fund Manager and Chief Equity Research Auditor for Indian capital markets.
+        Analyze core quantitative metrics, cross-verify them explicitly against the provided live news streams, and deliver a high-conviction final verdict.
+        Target Stock Asset Ticker: {ticker_name}
+        Strategy Scope Context Layer: {context_tag}
+        Live Numeric Metrics Vector: {stock_data}
+        Current Live Corporate News Context: {live_news_context}
         
-        [DIGESTED DATA ENVIRONMENT DATA]:
-        - Target Stock Asset Ticker: {ticker_name}
-        - Strategy Scope Context Layer: {context_tag}
-        - Live Numeric Metrics Vector: {stock_data}
-        - Current Live Corporate News Context: {live_news_context}
-        - Institutional Subpath Reference: {screener_reference_url}
-        
-        [STRICT INSTRUCTIONAL BOUNDARIES]:
-        - Never output boilerplate text, introductory pleasantries, or setup notes.
-        - Meticulously prevent generic placeholders or broken tokens like 'None' or 'NaN' from passing into your response layout.
+        STRICT INSTRUCTIONAL BOUNDARIES:
+        - Never output boilerplate text, introductory remarks, or setup notes.
         - Your analysis tone must match a strict Bloomberg analyst desk style: direct, data-dense, mathematical, and highly aggressive.
         
-        [TASK EXECUTION MATRIX]:
-        Generate a highly professional 2-paragraph final verdict based on the specific performance values:
-        - Paragraph 1: Quantitative & Fundamental Verification. Analyze the numerical values (ROCE/Leverage/Float Churn) and cross-verify them explicitly against the live news events and con-calls trajectory. Address if the news supports the hard metrics or if structural stress exists.
+        Generate a highly professional 2-paragraph final verdict:
+        - Paragraph 1: Quantitative & Fundamental Verification. Analyze the numerical values (ROCE/Leverage/Float Churn) and cross-verify them explicitly against the live news events. Address if the structural trends are strong or showing stress.
         - Paragraph 2: Institutional Asset Allocation Verdict. State an aggressive, high-conviction mathematical argument outlining if an elite portfolio allocator should Accumulate, Hold, or Avoid this specific equity risk structure.
         """
-        response = model.generate_content(prompt)
-        return response.text
+        
+        payload = json.dumps({
+            "model": "llama-3.3-70b-specdec",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2
+        })
+        
+        headers = {
+            'Authorization': f'Bearer {GROQ_API_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        conn.request("POST", "/openai/v1/chat/completions", payload, headers)
+        res = conn.getcallresponse() if hasattr(conn, 'getcallresponse') else conn.getresponse()
+        data = res.read()
+        result_json = json.loads(data.decode("utf-8"))
+        
+        return result_json['choices'][0]['message']['content']
     except Exception as e:
-        error_msg = f"⚠️ **API CONNECTION ERROR**: {str(e)}"
+        # Displays clear dynamic errors if anything goes out of sync
+        error_msg = f"⚠️ **GROQ CONNECTION ERROR**: {str(e)}"
         return f"{error_msg}\n\n---\n\n{fallback_analysis}"
-    
