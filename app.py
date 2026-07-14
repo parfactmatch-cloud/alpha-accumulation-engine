@@ -4,9 +4,9 @@ import yfinance as yf
 import pandas as pd
 import agents 
 
-# 🖥️ 1. FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT (Squeeze Effect Fix)
+# 🖥️ FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT
 st.set_page_config(
-    page_title="Alpha Swarm Terminal",
+    page_title="Alpha Terminal",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -78,7 +78,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🕒 2. DYNAMIC INDIAN STANDARD TIME (IST) PARSING
+# 🕒 DYNAMIC INDIAN STANDARD TIME (IST) PARSING
 utc_now = datetime.datetime.utcnow()
 ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
 current_time_ist = ist_now.strftime("%H:%M:%S")
@@ -96,21 +96,28 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Main Screen Headings Layout
+# Main Title Headers Layout
 st.markdown("<h2 style='margin-bottom:0px; letter-spacing:-0.02em; color: #FFFFFF;'>🎛️ ALPHA MULTI-AGENT SWARM TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='color: #8E9AA8; font-size:13px; margin-top:0px; margin-bottom:25px;'>AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL</p>", unsafe_allow_html=True)
 
-# 🏢 3. INITIALIZE PERSISTENT STATE LOGIC TO PREVENT RESET FAILS
+# PERSISTENT RUN STATE STORAGE
 if 'radar_active' not in st.session_state:
     st.session_state.radar_active = False
+if 'last_selected_mode' not in st.session_state:
+    st.session_state.last_selected_mode = ""
 
-# 🏢 4. LEFT SIDEBAR CONFIGURATION (SEGMENTS & DYNAMIC RRG)
+# 🏢 LEFT SIDEBAR NAVIGATION
 st.sidebar.markdown("## ⚙️ SYSTEM NAVIGATION")
 
 selected_mode = st.sidebar.radio(
     "Select Strategy Engine Segment",
     ["Mode 1: IPO Core", "Mode 2: Value Owner", "Mode 3: Intraday VCP"]
 )
+
+# Reset radar active flag if user switches the mode segment
+if st.session_state.last_selected_mode != selected_mode:
+    st.session_state.radar_active = False
+    st.session_state.last_selected_mode = selected_mode
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🎯 MANUAL ASSET SEARCH")
@@ -143,16 +150,15 @@ if show_rrg:
         </div>
     """, unsafe_allow_html=True)
 
-# 🏃‍♂️ 5. ACTIVE EXECUTION PIPELINES CONTROL
 st.info(f"⚡ CURRENT ACTIVE SYSTEM STRATEGY: **{selected_mode.upper()}**")
 
 if st.button("EXECUTE SWEEP RADAR", type="primary"):
     st.session_state.radar_active = True
 
-# Scenario A: Manual Override Field Handling
+# 🏃‍♂️ SCENARIO A: MANUAL ASSET SEARCH OVERRIDE
 if custom_ticker_input:
     target_stock = custom_ticker_input if ".NS" in custom_ticker_input else f"{custom_ticker_input}.NS"
-    st.info(f"📡 **Swarm Isolation Pipeline Initiated:** `{target_stock}`")
+    st.info(f"📡 **Pipeline Initiated:** `{target_stock}`")
     try:
         ticker_data = yf.Ticker(target_stock)
         info = ticker_data.info
@@ -169,37 +175,42 @@ if custom_ticker_input:
             
         agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
     except Exception as error:
-        st.error(f"❌ Error compiling financial data arrays: {str(error)}")
+        st.error(f"❌ Error compiling financial data: {str(error)}")
 
-# Scenario B: Global Sweep Verification Loop (State Protected)
+# 🏃‍♂️ SCENARIO B: DYNAMIC INDEPENDENT MATRIX SWEEP (STATE PROTECTED)
 elif st.session_state.radar_active:
     st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
     
-    # 🛡️ PURE CONDITIONALLY SEGMENTED STOCK ARRAYS (7-Year Lock Filtered)
+    # INDEPENDENT SEPARATION LOGIC PER INDIVIDUAL STRATEGY ENGINE SEGMENT
     if "Mode 1" in selected_mode:
         raw_universe = [
             {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
             {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "Free-Float (Cr)": 6959.00, "Churn %": 45.20},
             {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "Free-Float (Cr)": 35450.00, "Churn %": 28.10}
         ]
+        display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "Free-Float (Cr)", "Churn %"]
+        
     elif "Mode 2" in selected_mode:
         raw_universe = [
-            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "ROCE %": 1.60, "Debt/Equity": 15.1},
-            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "ROCE %": 15.45, "Debt/Equity": 9.59},
-            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "ROCE %": 14.34, "Debt/Equity": 82.41}
+            {"Symbol": "AWL.NS", "Price (₹)": 362.10, "M-Cap (Cr)": 47050.30, "ROCE %": 12.40, "Debt/Equity": 0.25},
+            {"Symbol": "CAMPUS.NS", "Price (₹)": 285.50, "M-Cap (Cr)": 8700.15, "ROCE %": 18.20, "Debt/Equity": 0.12},
+            {"Symbol": "DATAINTEL.NS", "Price (₹)": 142.30, "M-Cap (Cr)": 3200.40, "ROCE %": 22.50, "Debt/Equity": 0.02}
         ]
-    else:
+        display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "ROCE %", "Debt/Equity"]
+        
+    else: # Mode 3: Intraday Volatility Compression Patterns (VCP)
         raw_universe = [
-            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18},
-            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49},
-            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05}
+            {"Symbol": "IDEAFORGE.NS", "Price (₹)": 782.40, "M-Cap (Cr)": 3250.80, "Live Price": 782.40, "Ceiling Res": 820.00},
+            {"Symbol": "NETWEB.NS", "Price (₹)": 1250.00, "M-Cap (Cr)": 7100.20, "Live Price": 1250.00, "Ceiling Res": 1310.00},
+            {"Symbol": "AZAD.NS", "Price (₹)": 645.15, "M-Cap (Cr)": 3720.60, "Live Price": 645.15, "Ceiling Res": 678.00}
         ]
+        display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "Live Price", "Ceiling Res"]
         
     df = pd.DataFrame(raw_universe)
     
-    # Render native select event checkbox block
+    # Render native select event checkbox block securely matching the targeted subset layout
     selection_event = st.dataframe(
-        df,
+        df[display_columns],
         use_container_width=True,
         on_select="rerun",
         selection_mode="single-row"
@@ -208,17 +219,18 @@ elif st.session_state.radar_active:
     selected_rows = selection_event.get("selection", {}).get("rows", [])
     
     st.markdown("---")
-    st.write("### 🤖 UNIFIED COGNITIVE INTELLIGENCE PANEL")
+    st.write("### 📋 STRATEGIC EVALUATION Core INTERFACE")
     
     if len(selected_rows) > 0:
         row_idx = selected_rows[0]
         selected_record = raw_universe[row_idx]
         target_symbol = selected_record["Symbol"]
         
-        st.info(f"⚡ Firing Swarm Cognitive Audit for Selected Row Asset: **{target_symbol}**")
+        # AGENT tags are fully hidden from display windows globally
+        st.info(f"⚡ Streaming Core Strategy Insights for Target: **{target_symbol}**")
         agents.run_ai_cognitive_agent(selected_record, selected_mode)
     else:
-        st.warning("👉 Please click the selection checkbox indicator on any row in the matrix table above to stream the dynamic Groq Cognitive Swarm Report.")
+        st.warning("👉 Please click the selection checkbox indicator on any row in the matrix table above to stream the dynamic evaluation insights report.")
 
 else:
     st.markdown("""
@@ -226,4 +238,3 @@ else:
             <p style='color: #8E9AA8; font-size: 14px;'>Terminal Dashboard Idle. Select a strategy segment or search an asset from the sidebar to initialize data sweeps.</p>
         </div>
     """, unsafe_allow_html=True)
-    
