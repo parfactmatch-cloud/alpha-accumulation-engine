@@ -3,16 +3,16 @@ import datetime
 import yfinance as yf
 import pandas as pd
 import agents 
-import plotly.express as px  # For Strike style asset visualization matrix
+import plotly.express as px  # Professional asset chart standard matrix
 
-# 🖥️ 1. FORCE MAXIMUM WIDTH OPEN LAYOUT (Squeeze Effect Permanent Fix)
+# 🖥️ FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT
 st.set_page_config(
-    page_title="Alpha Swarm Terminal",
+    page_title="Alpha Terminal",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 🎨 2. STRIKE TERMINAL DESIGN & CSS LAYOUT OVERRIDES
+# 🎨 PREMIUM TERMINAL UI AND STRIKE CONTRAST STYLING
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -22,7 +22,7 @@ st.markdown("""
         color: #E2E8F0 !important;
     }
     
-    /* 📈 DYNAMIC TRADING MARQUEE TICKER */
+    /* 📈 DYNAMIC LIVE TICKER ENGINE */
     .ticker-wrapper {
         background-color: #0E1117 !important;
         border: 1px solid #23324D !important;
@@ -46,7 +46,7 @@ st.markdown("""
     .gainer { color: #00E676 !important; font-weight: 600; margin-right: 30px; }
     .loser { color: #FF5252 !important; font-weight: 600; margin-right: 30px; }
     
-    /* 🎛️ SIDEBAR RADAR RADIO SEGMENTS STYLE */
+    /* 🎛️ SIDEBAR RADAR RADIO SEGMENTS */
     div.row-widget.stRadio > div {
         background-color: #11151F !important;
         border: 1px solid #23324D !important;
@@ -79,7 +79,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🕒 3. INDIAN STANDARD TIME (IST) PARSING TRACKER
+# 🕒 DYNAMIC INDIAN STANDARD TIME (IST) PARSING
 utc_now = datetime.datetime.utcnow()
 ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
 current_time_ist = ist_now.strftime("%H:%M:%S")
@@ -97,17 +97,17 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Corporate Interface Titles
+# Main Title Headers Layout
 st.markdown("<h2 style='margin-bottom:0px; letter-spacing:-0.02em; color: #FFFFFF;'>🎛️ ALPHA MULTI-AGENT SWARM TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='color: #8E9AA8; font-size:13px; margin-top:0px; margin-bottom:25px;'>AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL</p>", unsafe_allow_html=True)
 
-# 🏢 4. INITIALIZE PERSISTENT STATE TO PREVENT FAILS
+# PERSISTENT RUN STATE STORAGE
 if 'radar_active' not in st.session_state:
     st.session_state.radar_active = False
 if 'last_selected_mode' not in st.session_state:
     st.session_state.last_selected_mode = ""
 
-# 🏢 5. LEFT SIDEBAR CONFIGURATION (SEGMENTS & SECTOR RRG MAP)
+# 🏢 LEFT SIDEBAR NAVIGATION
 st.sidebar.markdown("## ⚙️ SYSTEM NAVIGATION")
 
 selected_mode = st.sidebar.radio(
@@ -174,15 +174,17 @@ if custom_ticker_input:
             parsed_stock_metrics["Live Price"] = info.get("currentPrice", info.get("regularMarketPrice", 500.0))
             parsed_stock_metrics["Ceiling Res"] = parsed_stock_metrics["Live Price"] * 1.05
             
-        agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
+        ai_output = agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
+        if ai_output:
+            st.write(ai_output)
     except Exception as error:
         st.error(f"❌ Error compiling financial data fields: {str(error)}")
 
-# 🏃‍♂️ SCENARIO B: INDEPENDENT DATA PROCESSING LOOPS (STATE LOCKED)
+# 🏃‍♂️ SCENARIO B: DYNAMIC INDEPENDENT MATRIX SWEEP (STATE LOCKED)
 elif st.session_state.radar_active:
     st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
     
-    # 🛡️ 100% UNTOUCHED ORIGINAL LOGIC FILTRATION UNIVERSE & COLUMNS
+    # 🛡️ STRICT CONDITIONAL STRATEGY DATA packet separation
     if "Mode 1" in selected_mode:
         raw_universe = [
             {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
@@ -209,7 +211,7 @@ elif st.session_state.radar_active:
         
     df = pd.DataFrame(raw_universe)
     
-    # 🔗 STRIKE NATIVE INTERACTIVE DATAFRAME SELECTION BOXES RESTORED
+    # 🔗 STRIKE NATIVE INTERACTIVE DATAFRAME SELECTION BOXES
     selection_event = st.dataframe(
         df[display_columns],
         use_container_width=True,
@@ -220,43 +222,59 @@ elif st.session_state.radar_active:
     selected_rows = selection_event.get("selection", {}).get("rows", [])
     
     st.markdown("---")
-    st.write("### 📋 STRATEGIC EVALUATION CORE INTERFACE")
     
     if len(selected_rows) > 0:
         row_idx = selected_rows[0]
         selected_record = raw_universe[row_idx]
         target_symbol = selected_record["Symbol"]
         
-        st.info(f"⚡ Streaming Core Strategy Insights for Target: **{target_symbol}**")
+        # 🏛️ FIXED VERTICAL COLUMN ROUTING SPLIT (3:2 Ratio)
+        col1, col2 = st.columns([3, 2])
         
-        # Part 1: Strategic text dump (Agent tags are fully hidden from front-end)
-        agents.run_ai_cognitive_agent(selected_record, selected_mode)
-        
-        st.markdown("---")
-        st.write("### 📊 ASSET CLASS ALLOCATION MATRIX")
-        
-        # Part 2: Premium Asset Allocation Donut Chart Integration (Full Width Display)
-        allocation_mock_dataset = pd.DataFrame({
-            'Asset Class': ['Strategic Equity Subsystem', 'Liquid Capital Reserve', 'Fixed Income Matrix', 'Gold Vectors'],
-            'Allocation Weight (%)': [55.0, 20.0, 18.0, 7.0]
-        })
-        
-        donut_figure = px.pie(
-            allocation_mock_dataset, 
-            values='Allocation Weight (%)', 
-            names='Asset Class', 
-            hole=0.55,
-            color_discrete_sequence=px.colors.sequential.Plotly3
-        )
-        
-        donut_figure.update_layout(
-            margin=dict(t=30, b=30, l=10, r=10), 
-            paper_bgcolor="rgba(0,0,0,0)", 
-            font_color="#E2E8F0",
-            legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
-        )
-        
-        st.plotly_chart(donut_figure, use_container_width=True)
+        with col1:
+            st.write("### 📋 STRATEGIC EVALUATION CORE INTERFACE")
+            st.info(f"⚡ Streaming Core Strategy Insights for Target: **{target_symbol}**")
+            try:
+                # Text output generation layer
+                agents.run_ai_cognitive_agent(selected_record, selected_mode)
+            except Exception as inner_err:
+                pass
+                
+        with col2:
+            st.write("### 📊 ASSET CLASS ALLOCATION MATRIX")
+            
+            # Premium Asset Allocation Dataset
+            allocation_mock_dataset = pd.DataFrame({
+                'Asset Class': ['Strategic Equity Subsystem', 'Liquid Capital Reserve', 'Fixed Income Matrix', 'Gold Vectors'],
+                'Allocation Weight (%)': [55.0, 20.0, 18.0, 7.0]
+            })
+            
+            # 🎨 COLOR MATRIX UPGRADE (Discrete Contrast Scheme)
+            # Equity = Dark Teal, Cash = Royal Blue, Fixed Income = Vibrant Amber, Gold = Pure Metallic Gold
+            vibrant_color_palette = ['#0D9488', '#2563EB', '#F59E0B', '#D4AF37']
+            
+            donut_figure = px.pie(
+                allocation_mock_dataset, 
+                values='Allocation Weight (%)', 
+                names='Asset Class', 
+                hole=0.55,
+                color_discrete_sequence=vibrant_color_palette
+            )
+            
+            donut_figure.update_layout(
+                margin=dict(t=20, b=20, l=10, r=10), 
+                paper_bgcolor="rgba(0,0,0,0)", 
+                font_color="#E2E8F0",
+                legend=dict(
+                    orientation="v", 
+                    yanchor="middle", 
+                    y=0.5, 
+                    xanchor="left", 
+                    x=1.05
+                )
+            )
+            
+            st.plotly_chart(donut_figure, use_container_width=True)
         
     else:
         st.warning("👉 Please click the selection checkbox indicator on any row in the matrix table above to stream the dynamic evaluation insights report.")
@@ -267,4 +285,4 @@ else:
             <p style='color: #8E9AA8; font-size: 14px;'>Terminal Dashboard Idle. Select a strategy segment or search an asset from the sidebar to initialize data sweeps.</p>
         </div>
     """, unsafe_allow_html=True)
-        
+    
