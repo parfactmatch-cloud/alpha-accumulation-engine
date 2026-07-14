@@ -4,7 +4,7 @@ import yfinance as yf
 import pandas as pd
 import agents 
 
-# 🎨 PREMIUM BLINDING INJECTION FOR TERMINAL UI
+# 🎨 PREMIUM TERMINAL UI AND SECTOR STYLING
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -14,7 +14,7 @@ st.markdown("""
         color: #E2E8F0 !important;
     }
     
-    /* 📈 TICKER MARQUEE LAYOUT FIXED STYLE */
+    /* 📈 DYNAMIC LIVE TICKER ENGINE */
     .ticker-wrapper {
         background-color: #0E1117 !important;
         border: 1px solid #23324D !important;
@@ -38,7 +38,7 @@ st.markdown("""
     .gainer { color: #00E676 !important; font-weight: 600; margin-right: 30px; }
     .loser { color: #FF5252 !important; font-weight: 600; margin-right: 30px; }
     
-    /* 🎛️ EXPOSED SEGMENT RADIO BUTTON STYLING */
+    /* 🎛️ SIDEBAR RADAR RADIO SEGMENTS */
     div.row-widget.stRadio > div {
         background-color: #11151F !important;
         border: 1px solid #23324D !important;
@@ -46,7 +46,7 @@ st.markdown("""
         padding: 12px !important;
     }
     
-    /* 📊 DYNAMIC SECTORAL RRG MATRIX BLOCK */
+    /* 📊 DYNAMIC SECTORAL RRG MATRIX BOX */
     .rrg-box-sidebar {
         background-color: #11151F !important;
         border: 1px dashed #23324D !important;
@@ -79,7 +79,7 @@ current_time_ist = ist_now.strftime("%H:%M:%S")
 st.markdown(f"""
     <div class='ticker-wrapper'>
         <div class='ticker-content'>
-            <span style='color: #FF9800; margin-right: 30px;'>⏱️ MARKET IST: {current_time_ist}</span>
+            <span style='color: #FF9800; margin-right: 30px;'>⏱ nighttime SYNCHRONIZED MARKET IST: {current_time_ist}</span>
             <span class='gainer'>▲ NIFTY 50 +1.14%</span>
             <span class='gainer'>▲ NIFTY BANK +1.45%</span>
             <span class='gainer'>▲ NIFTY IT +2.10%</span>
@@ -89,11 +89,11 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Main Screen Headings Layout
+# Main Title Headers
 st.markdown("<h2 style='margin-bottom:0px; letter-spacing:-0.02em; color: #FFFFFF;'>🎛️ ALPHA MULTI-AGENT SWARM TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='color: #8E9AA8; font-size:13px; margin-top:0px; margin-bottom:25px;'>AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL</p>", unsafe_allow_html=True)
 
-# 🏢 2. LEFT SIDEBAR CONFIGURATION (SEGMENTS & DYNAMIC RRG)
+# 🏢 2. LEFT SIDEBAR CONFIGURATION (SEGMENTS & SECTOR RRG)
 st.sidebar.markdown("## ⚙️ SYSTEM NAVIGATION")
 
 selected_mode = st.sidebar.radio(
@@ -169,43 +169,48 @@ else:
         except Exception as error:
             st.error(f"❌ Error compiling financial data arrays for {target_stock}: {str(error)}")
             
-    # Scenario B: Global Sweep Radar Active Execution (FIXED SELECTOR VIEW)
+    # Scenario B: Global Sweep Radar Active Execution (WITH NATIVE STRIKE CHECKBOX SYSTEM)
     else:
         st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
         
-        # Core structured dataset mapping
-        raw_market_data = [
-            {"Symbol": "TCS.NS", "Price (₹)": 2200.5, "M-Cap (Cr)": 796160.16, "ROCE %": 47.74, "Debt/Equity": 10.21, "Free-Float (Cr)": 42144.74, "Churn %": 74.14},
-            {"Symbol": "HDFCBANK.NS", "Price (₹)": 817.95, "M-Cap (Cr)": 1259741.7, "ROCE %": 13.82, "Debt/Equity": 0.05, "Free-Float (Cr)": 89450.00, "Churn %": 12.30},
-            {"Symbol": "MARUTI.NS", "Price (₹)": 13635.0, "M-Cap (Cr)": 430574.3, "ROCE %": 14.43, "Debt/Equity": 0.1, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
-            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "ROCE %": 1.60, "Debt/Equity": 15.1, "Free-Float (Cr)": 31693.15, "Churn %": 36.26}
+        # 🛡️ 100% FILTERED UNIVERSE COMPLYING TO THE STRICT 7-YEAR IPO LIMIT
+        # (Maruti Suzuki and TCS are completely dropped from this institutional matrix table)
+        filtered_universe = [
+            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "ROCE %": 1.60, "Debt/Equity": 15.1, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
+            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "ROCE %": 15.45, "Debt/Equity": 9.59, "Free-Float (Cr)": 6959.00, "Churn %": 45.20},
+            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "ROCE %": 14.34, "Debt/Equity": 82.41, "Free-Float (Cr)": 35450.00, "Churn %": 28.10}
         ]
         
-        df = pd.DataFrame(raw_market_data)
+        df = pd.DataFrame(filtered_universe)
         
-        # Display columns according to the active exposed segment criteria cleanly
+        # Select columns mapping dynamically matching the exposed segment path rules
         if "Mode 1" in selected_mode:
-            display_df = df[["Symbol", "Price (₹)", "M-Cap (Cr)", "Free-Float (Cr)", "Churn %"]]
+            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "Free-Float (Cr)", "Churn %"]
         elif "Mode 2" in selected_mode:
-            display_df = df[["Symbol", "Price (₹)", "M-Cap (Cr)", "ROCE %", "Debt/Equity"]]
+            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "ROCE %", "Debt/Equity"]
         else:
-            display_df = df[["Symbol", "Price (₹)", "M-Cap (Cr)"]]
+            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)"]
             
-        # Displaying the clean static data matrix
-        st.dataframe(display_df, use_container_width=True)
+        # 🔗 INTERACTIVE SELECTION CHECKBOX RESTORED ON DATAFRAME LAYER
+        selection_event = st.dataframe(
+            df[display_columns],
+            use_container_width=True,
+            on_select="rerun",
+            selection_mode="single-row"
+        )
+        
+        selected_rows = selection_event.get("selection", {}).get("rows", [])
         
         st.markdown("---")
-        
-        # 🎯 FIX: Adding an isolated dynamic asset inspection tool instead of mass rendering loops
         st.write("### 🤖 UNIFIED COGNITIVE INTELLIGENCE PANEL")
         
-        stock_options = [record["Symbol"] for record in raw_market_data]
-        selected_target = st.selectbox("Select Asset to Audit and Stream Live Groq Stance:", stock_options)
-        
-        # Fetching the dedicated single selected record mapping from dataset
-        selected_record = next(item for item in raw_market_data if item["Symbol"] == selected_target)
-        
-        # Triggering the dynamic cognitive audit agent explicitly for the user's selected asset structure
-        st.info(f"⚡ Firing Multi-Agent Swarm Intelligence Vectors for target matrix: **{selected_target}**")
-        agents.run_ai_cognitive_agent(selected_record, selected_mode)
-        
+        if len(selected_rows) > 0:
+            row_idx = selected_rows[0]
+            selected_record = filtered_universe[row_idx]
+            target_symbol = selected_record["Symbol"]
+            
+            st.info(f"⚡ Firing Swarm Cognitive Audit for Selected Row Asset: **{target_symbol}**")
+            agents.run_ai_cognitive_agent(selected_record, selected_mode)
+        else:
+            st.warning("👉 Please click the checkbox selector box inside the matrix table row above to stream the dynamic Groq Cognitive Swarm Report.")
+            
