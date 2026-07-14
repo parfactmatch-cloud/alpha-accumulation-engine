@@ -3,16 +3,16 @@ import datetime
 import yfinance as yf
 import pandas as pd
 import agents 
-import plotly.express as px  # Professional asset chart standard matrix
+import plotly.express as px  # For Strike style asset visualization matrix
 
-# 🖥️ FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT
+# 🖥️ 1. FORCE MAXIMUM WIDTH OPEN LAYOUT (Squeeze Effect Permanent Fix)
 st.set_page_config(
-    page_title="Alpha Terminal",
+    page_title="Alpha Swarm Terminal",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 🎨 PREMIUM TERMINAL UI AND SECTOR STYLING
+# 🎨 2. STRIKE TERMINAL DESIGN & CSS LAYOUT OVERRIDES
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -22,7 +22,7 @@ st.markdown("""
         color: #E2E8F0 !important;
     }
     
-    /* 📈 DYNAMIC LIVE TICKER ENGINE */
+    /* 📈 DYNAMIC TRADING MARQUEE TICKER */
     .ticker-wrapper {
         background-color: #0E1117 !important;
         border: 1px solid #23324D !important;
@@ -46,7 +46,7 @@ st.markdown("""
     .gainer { color: #00E676 !important; font-weight: 600; margin-right: 30px; }
     .loser { color: #FF5252 !important; font-weight: 600; margin-right: 30px; }
     
-    /* 🎛️ SIDEBAR RADAR RADIO SEGMENTS */
+    /* 🎛️ SIDEBAR RADAR RADIO SEGMENTS STYLE */
     div.row-widget.stRadio > div {
         background-color: #11151F !important;
         border: 1px solid #23324D !important;
@@ -79,7 +79,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🕒 DYNAMIC INDIAN STANDARD TIME (IST) PARSING
+# 🕒 3. INDIAN STANDARD TIME (IST) PARSING TRACKER
 utc_now = datetime.datetime.utcnow()
 ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
 current_time_ist = ist_now.strftime("%H:%M:%S")
@@ -97,17 +97,17 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Main Title Headers Layout
+# Corporate Interface Titles
 st.markdown("<h2 style='margin-bottom:0px; letter-spacing:-0.02em; color: #FFFFFF;'>🎛️ ALPHA MULTI-AGENT SWARM TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='color: #8E9AA8; font-size:13px; margin-top:0px; margin-bottom:25px;'>AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL</p>", unsafe_allow_html=True)
 
-# PERSISTENT RUN STATE STORAGE
+# 🏢 4. INITIALIZE PERSISTENT STATE TO PREVENT FAILS
 if 'radar_active' not in st.session_state:
     st.session_state.radar_active = False
 if 'last_selected_mode' not in st.session_state:
     st.session_state.last_selected_mode = ""
 
-# 🏢 LEFT SIDEBAR NAVIGATION
+# 🏢 5. LEFT SIDEBAR CONFIGURATION (SEGMENTS & SECTOR RRG MAP)
 st.sidebar.markdown("## ⚙️ SYSTEM NAVIGATION")
 
 selected_mode = st.sidebar.radio(
@@ -115,7 +115,7 @@ selected_mode = st.sidebar.radio(
     ["Mode 1: IPO Core", "Mode 2: Value Owner", "Mode 3: Intraday VCP"]
 )
 
-# Reset radar active flag if user switches the mode segment
+# Reset active engine triggers safely if mode changes
 if st.session_state.last_selected_mode != selected_mode:
     st.session_state.radar_active = False
     st.session_state.last_selected_mode = selected_mode
@@ -156,7 +156,7 @@ st.info(f"⚡ CURRENT ACTIVE SYSTEM STRATEGY: **{selected_mode.upper()}**")
 if st.button("EXECUTE SWEEP RADAR", type="primary"):
     st.session_state.radar_active = True
 
-# 🏃‍♂️ SCENARIO A: MANUAL OVERRIDE ASSET SEARCH
+# 🏃‍♂️ SCENARIO A: MANUAL OVERRIDE SEARCH HANDLING
 if custom_ticker_input:
     target_stock = custom_ticker_input if ".NS" in custom_ticker_input else f"{custom_ticker_input}.NS"
     st.info(f"📡 **Pipeline Initiated:** `{target_stock}`")
@@ -176,13 +176,13 @@ if custom_ticker_input:
             
         agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
     except Exception as error:
-        st.error(f"❌ Error compiling financial data: {str(error)}")
+        st.error(f"❌ Error compiling financial data fields: {str(error)}")
 
-# 🏃‍♂️ SCENARIO B: DYNAMIC INDEPENDENT MATRIX SWEEP (STATE PROTECTED)
+# 🏃‍♂️ SCENARIO B: INDEPENDENT DATA PROCESSING LOOPS (STATE LOCKED)
 elif st.session_state.radar_active:
     st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
     
-    # 🛡️ STRICT CONDITIONAL STRATEGY DATA packet separation
+    # 🛡️ 100% UNTOUCHED ORIGINAL LOGIC FILTRATION UNIVERSE & COLUMNS
     if "Mode 1" in selected_mode:
         raw_universe = [
             {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
@@ -209,7 +209,7 @@ elif st.session_state.radar_active:
         
     df = pd.DataFrame(raw_universe)
     
-    # Render native select event checkbox block securely matching the targeted subset layout
+    # 🔗 STRIKE NATIVE INTERACTIVE DATAFRAME SELECTION BOXES RESTORED
     selection_event = st.dataframe(
         df[display_columns],
         use_container_width=True,
@@ -229,13 +229,13 @@ elif st.session_state.radar_active:
         
         st.info(f"⚡ Streaming Core Strategy Insights for Target: **{target_symbol}**")
         
-        # Part 1: Text Analysis Stance
+        # Part 1: Strategic text dump (Agent tags are fully hidden from front-end)
         agents.run_ai_cognitive_agent(selected_record, selected_mode)
         
         st.markdown("---")
         st.write("### 📊 ASSET CLASS ALLOCATION MATRIX")
         
-        # Part 2: Dynamic Plotly Donut Chart Integration (Full Width View Fix)
+        # Part 2: Premium Asset Allocation Donut Chart Integration (Full Width Display)
         allocation_mock_dataset = pd.DataFrame({
             'Asset Class': ['Strategic Equity Subsystem', 'Liquid Capital Reserve', 'Fixed Income Matrix', 'Gold Vectors'],
             'Allocation Weight (%)': [55.0, 20.0, 18.0, 7.0]
