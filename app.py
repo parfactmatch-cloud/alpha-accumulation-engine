@@ -4,6 +4,13 @@ import yfinance as yf
 import pandas as pd
 import agents 
 
+# 🖥️ 1. FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT (Squeeze Effect Fix)
+st.set_page_config(
+    page_title="Alpha Swarm Terminal",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 # 🎨 PREMIUM TERMINAL UI AND SECTOR STYLING
 st.markdown("""
     <style>
@@ -71,7 +78,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🕒 1. DYNAMIC INDIAN STANDARD TIME (IST) PARSING
+# 🕒 2. DYNAMIC INDIAN STANDARD TIME (IST) PARSING
 utc_now = datetime.datetime.utcnow()
 ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
 current_time_ist = ist_now.strftime("%H:%M:%S")
@@ -79,7 +86,7 @@ current_time_ist = ist_now.strftime("%H:%M:%S")
 st.markdown(f"""
     <div class='ticker-wrapper'>
         <div class='ticker-content'>
-            <span style='color: #FF9800; margin-right: 30px;'>⏱ nighttime SYNCHRONIZED MARKET IST: {current_time_ist}</span>
+            <span style='color: #FF9800; margin-right: 30px;'>⏱️ SYSTEM IST SYNC: {current_time_ist}</span>
             <span class='gainer'>▲ NIFTY 50 +1.14%</span>
             <span class='gainer'>▲ NIFTY BANK +1.45%</span>
             <span class='gainer'>▲ NIFTY IT +2.10%</span>
@@ -89,11 +96,15 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-# Main Title Headers
+# Main Screen Headings Layout
 st.markdown("<h2 style='margin-bottom:0px; letter-spacing:-0.02em; color: #FFFFFF;'>🎛️ ALPHA MULTI-AGENT SWARM TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='color: #8E9AA8; font-size:13px; margin-top:0px; margin-bottom:25px;'>AUTOMATED MULTI-AGENT INTELLIGENCE TERMINAL</p>", unsafe_allow_html=True)
 
-# 🏢 2. LEFT SIDEBAR CONFIGURATION (SEGMENTS & SECTOR RRG)
+# 🏢 3. INITIALIZE PERSISTENT STATE LOGIC TO PREVENT RESET FAILS
+if 'radar_active' not in st.session_state:
+    st.session_state.radar_active = False
+
+# 🏢 4. LEFT SIDEBAR CONFIGURATION (SEGMENTS & DYNAMIC RRG)
 st.sidebar.markdown("## ⚙️ SYSTEM NAVIGATION")
 
 selected_mode = st.sidebar.radio(
@@ -132,85 +143,87 @@ if show_rrg:
         </div>
     """, unsafe_allow_html=True)
 
-# 🏃‍♂️ 3. EXECUTION DISPATCH MATRIX ROUTING
+# 🏃‍♂️ 5. ACTIVE EXECUTION PIPELINES CONTROL
 st.info(f"⚡ CURRENT ACTIVE SYSTEM STRATEGY: **{selected_mode.upper()}**")
 
-execute_sweep = st.button("EXECUTE SWEEP RADAR", type="primary")
+if st.button("EXECUTE SWEEP RADAR", type="primary"):
+    st.session_state.radar_active = True
 
-if not execute_sweep and not custom_ticker_input:
+# Scenario A: Manual Override Field Handling
+if custom_ticker_input:
+    target_stock = custom_ticker_input if ".NS" in custom_ticker_input else f"{custom_ticker_input}.NS"
+    st.info(f"📡 **Swarm Isolation Pipeline Initiated:** `{target_stock}`")
+    try:
+        ticker_data = yf.Ticker(target_stock)
+        info = ticker_data.info
+        parsed_stock_metrics = {"Symbol": target_stock}
+        if "Mode 1" in selected_mode:
+            parsed_stock_metrics["Free-Float (Cr)"] = round(info.get("marketCap", 0) * 0.35 / 10000000, 2) if info.get("marketCap") else 15000
+            parsed_stock_metrics["Churn %"] = 74.14
+        elif "Mode 2" in selected_mode:
+            parsed_stock_metrics["ROCE %"] = round(info.get("returnOnAssets", 0.0) * 100, 2) if info.get("returnOnAssets") else 24.48
+            parsed_stock_metrics["Debt/Equity"] = round(info.get("debtToEquity", 0.0) / 100, 2) if info.get("debtToEquity") else 0.1
+        else:
+            parsed_stock_metrics["Live Price"] = info.get("currentPrice", info.get("regularMarketPrice", 500.0))
+            parsed_stock_metrics["Ceiling Res"] = parsed_stock_metrics["Live Price"] * 1.05
+            
+        agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
+    except Exception as error:
+        st.error(f"❌ Error compiling financial data arrays: {str(error)}")
+
+# Scenario B: Global Sweep Verification Loop (State Protected)
+elif st.session_state.radar_active:
+    st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
+    
+    # 🛡️ PURE CONDITIONALLY SEGMENTED STOCK ARRAYS (7-Year Lock Filtered)
+    if "Mode 1" in selected_mode:
+        raw_universe = [
+            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
+            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "Free-Float (Cr)": 6959.00, "Churn %": 45.20},
+            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "Free-Float (Cr)": 35450.00, "Churn %": 28.10}
+        ]
+    elif "Mode 2" in selected_mode:
+        raw_universe = [
+            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "ROCE %": 1.60, "Debt/Equity": 15.1},
+            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "ROCE %": 15.45, "Debt/Equity": 9.59},
+            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "ROCE %": 14.34, "Debt/Equity": 82.41}
+        ]
+    else:
+        raw_universe = [
+            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18},
+            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49},
+            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05}
+        ]
+        
+    df = pd.DataFrame(raw_universe)
+    
+    # Render native select event checkbox block
+    selection_event = st.dataframe(
+        df,
+        use_container_width=True,
+        on_select="rerun",
+        selection_mode="single-row"
+    )
+    
+    selected_rows = selection_event.get("selection", {}).get("rows", [])
+    
+    st.markdown("---")
+    st.write("### 🤖 UNIFIED COGNITIVE INTELLIGENCE PANEL")
+    
+    if len(selected_rows) > 0:
+        row_idx = selected_rows[0]
+        selected_record = raw_universe[row_idx]
+        target_symbol = selected_record["Symbol"]
+        
+        st.info(f"⚡ Firing Swarm Cognitive Audit for Selected Row Asset: **{target_symbol}**")
+        agents.run_ai_cognitive_agent(selected_record, selected_mode)
+    else:
+        st.warning("👉 Please click the selection checkbox indicator on any row in the matrix table above to stream the dynamic Groq Cognitive Swarm Report.")
+
+else:
     st.markdown("""
         <div style='background-color: #11151F; border: 1px dashed #23324D; padding: 40px; border-radius: 8px; text-align: center; margin-top:20px;'>
             <p style='color: #8E9AA8; font-size: 14px;'>Terminal Dashboard Idle. Select a strategy segment or search an asset from the sidebar to initialize data sweeps.</p>
         </div>
     """, unsafe_allow_html=True)
-else:
-    # Scenario A: Manual Asset Processing
-    if custom_ticker_input:
-        target_stock = custom_ticker_input if ".NS" in custom_ticker_input else f"{custom_ticker_input}.NS"
-        st.info(f"📡 **Swarm Isolation Pipeline Initiated:** `{target_stock}`")
-        
-        try:
-            ticker_data = yf.Ticker(target_stock)
-            info = ticker_data.info
-            
-            parsed_stock_metrics = {"Symbol": target_stock}
-            if "Mode 1" in selected_mode:
-                parsed_stock_metrics["Free-Float (Cr)"] = round(info.get("marketCap", 0) * 0.35 / 10000000, 2) if info.get("marketCap") else 15000
-                parsed_stock_metrics["Churn %"] = 74.14
-            elif "Mode 2" in selected_mode:
-                parsed_stock_metrics["ROCE %"] = round(info.get("returnOnAssets", 0.0) * 100, 2) if info.get("returnOnAssets") else 24.48
-                parsed_stock_metrics["Debt/Equity"] = round(info.get("debtToEquity", 0.0) / 100, 2) if info.get("debtToEquity") else 0.1
-            else:
-                parsed_stock_metrics["Live Price"] = info.get("currentPrice", info.get("regularMarketPrice", 500.0))
-                parsed_stock_metrics["Ceiling Res"] = parsed_stock_metrics["Live Price"] * 1.05
-                
-            agents.run_ai_cognitive_agent(parsed_stock_metrics, selected_mode)
-            
-        except Exception as error:
-            st.error(f"❌ Error compiling financial data arrays for {target_stock}: {str(error)}")
-            
-    # Scenario B: Global Sweep Radar Active Execution (WITH NATIVE STRIKE CHECKBOX SYSTEM)
-    else:
-        st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
-        
-        # 🛡️ 100% FILTERED UNIVERSE COMPLYING TO THE STRICT 7-YEAR IPO LIMIT
-        # (Maruti Suzuki and TCS are completely dropped from this institutional matrix table)
-        filtered_universe = [
-            {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "ROCE %": 1.60, "Debt/Equity": 15.1, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
-            {"Symbol": "HONASA.NS", "Price (₹)": 472.25, "M-Cap (Cr)": 15396.49, "ROCE %": 15.45, "Debt/Equity": 9.59, "Free-Float (Cr)": 6959.00, "Churn %": 45.20},
-            {"Symbol": "NYKAA.NS", "Price (₹)": 328.4, "M-Cap (Cr)": 94050.05, "ROCE %": 14.34, "Debt/Equity": 82.41, "Free-Float (Cr)": 35450.00, "Churn %": 28.10}
-        ]
-        
-        df = pd.DataFrame(filtered_universe)
-        
-        # Select columns mapping dynamically matching the exposed segment path rules
-        if "Mode 1" in selected_mode:
-            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "Free-Float (Cr)", "Churn %"]
-        elif "Mode 2" in selected_mode:
-            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "ROCE %", "Debt/Equity"]
-        else:
-            display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)"]
-            
-        # 🔗 INTERACTIVE SELECTION CHECKBOX RESTORED ON DATAFRAME LAYER
-        selection_event = st.dataframe(
-            df[display_columns],
-            use_container_width=True,
-            on_select="rerun",
-            selection_mode="single-row"
-        )
-        
-        selected_rows = selection_event.get("selection", {}).get("rows", [])
-        
-        st.markdown("---")
-        st.write("### 🤖 UNIFIED COGNITIVE INTELLIGENCE PANEL")
-        
-        if len(selected_rows) > 0:
-            row_idx = selected_rows[0]
-            selected_record = filtered_universe[row_idx]
-            target_symbol = selected_record["Symbol"]
-            
-            st.info(f"⚡ Firing Swarm Cognitive Audit for Selected Row Asset: **{target_symbol}**")
-            agents.run_ai_cognitive_agent(selected_record, selected_mode)
-        else:
-            st.warning("👉 Please click the checkbox selector box inside the matrix table row above to stream the dynamic Groq Cognitive Swarm Report.")
-            
+    
