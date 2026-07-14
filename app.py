@@ -3,6 +3,7 @@ import datetime
 import yfinance as yf
 import pandas as pd
 import agents 
+import plotly.express as px  # Professional asset chart standard matrix
 
 # 🖥️ FORCE INSTITUTIONAL FULL-SCREEN WIDE LAYOUT
 st.set_page_config(
@@ -155,7 +156,7 @@ st.info(f"⚡ CURRENT ACTIVE SYSTEM STRATEGY: **{selected_mode.upper()}**")
 if st.button("EXECUTE SWEEP RADAR", type="primary"):
     st.session_state.radar_active = True
 
-# 🏃‍♂️ SCENARIO A: MANUAL ASSET SEARCH OVERRIDE
+# 🏃‍♂️ SCENARIO A: MANUAL OVERRIDE ASSET SEARCH
 if custom_ticker_input:
     target_stock = custom_ticker_input if ".NS" in custom_ticker_input else f"{custom_ticker_input}.NS"
     st.info(f"📡 **Pipeline Initiated:** `{target_stock}`")
@@ -181,7 +182,7 @@ if custom_ticker_input:
 elif st.session_state.radar_active:
     st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
     
-    # INDEPENDENT SEPARATION LOGIC PER INDIVIDUAL STRATEGY ENGINE SEGMENT
+    # 🛡️ STRICT CONDITIONAL STRATEGY DATA packet separation
     if "Mode 1" in selected_mode:
         raw_universe = [
             {"Symbol": "DELHIVERY.NS", "Price (₹)": 516.4, "M-Cap (Cr)": 38681.18, "Free-Float (Cr)": 31693.15, "Churn %": 36.26},
@@ -198,7 +199,7 @@ elif st.session_state.radar_active:
         ]
         display_columns = ["Symbol", "Price (₹)", "M-Cap (Cr)", "ROCE %", "Debt/Equity"]
         
-    else: # Mode 3: Intraday Volatility Compression Patterns (VCP)
+    else: 
         raw_universe = [
             {"Symbol": "IDEAFORGE.NS", "Price (₹)": 782.40, "M-Cap (Cr)": 3250.80, "Live Price": 782.40, "Ceiling Res": 820.00},
             {"Symbol": "NETWEB.NS", "Price (₹)": 1250.00, "M-Cap (Cr)": 7100.20, "Live Price": 1250.00, "Ceiling Res": 1310.00},
@@ -219,16 +220,44 @@ elif st.session_state.radar_active:
     selected_rows = selection_event.get("selection", {}).get("rows", [])
     
     st.markdown("---")
-    st.write("### 📋 STRATEGIC EVALUATION Core INTERFACE")
+    st.write("### 📋 STRATEGIC EVALUATION CORE INTERFACE")
     
     if len(selected_rows) > 0:
         row_idx = selected_rows[0]
         selected_record = raw_universe[row_idx]
         target_symbol = selected_record["Symbol"]
         
-        # AGENT tags are fully hidden from display windows globally
         st.info(f"⚡ Streaming Core Strategy Insights for Target: **{target_symbol}**")
+        
+        # Part 1: Text Analysis Stance
         agents.run_ai_cognitive_agent(selected_record, selected_mode)
+        
+        st.markdown("---")
+        st.write("### 📊 ASSET CLASS ALLOCATION MATRIX")
+        
+        # Part 2: Dynamic Plotly Donut Chart Integration (Full Width View Fix)
+        allocation_mock_dataset = pd.DataFrame({
+            'Asset Class': ['Strategic Equity Subsystem', 'Liquid Capital Reserve', 'Fixed Income Matrix', 'Gold Vectors'],
+            'Allocation Weight (%)': [55.0, 20.0, 18.0, 7.0]
+        })
+        
+        donut_figure = px.pie(
+            allocation_mock_dataset, 
+            values='Allocation Weight (%)', 
+            names='Asset Class', 
+            hole=0.55,
+            color_discrete_sequence=px.colors.sequential.Plotly3
+        )
+        
+        donut_figure.update_layout(
+            margin=dict(t=30, b=30, l=10, r=10), 
+            paper_bgcolor="rgba(0,0,0,0)", 
+            font_color="#E2E8F0",
+            legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+        )
+        
+        st.plotly_chart(donut_figure, use_container_width=True)
+        
     else:
         st.warning("👉 Please click the selection checkbox indicator on any row in the matrix table above to stream the dynamic evaluation insights report.")
 
@@ -238,3 +267,4 @@ else:
             <p style='color: #8E9AA8; font-size: 14px;'>Terminal Dashboard Idle. Select a strategy segment or search an asset from the sidebar to initialize data sweeps.</p>
         </div>
     """, unsafe_allow_html=True)
+        
