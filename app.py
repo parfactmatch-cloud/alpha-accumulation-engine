@@ -9,7 +9,6 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     
-    /* Main Layout Overhauls */
     html, body, [class*="css"], .stMarkdown p {
         font-family: 'Inter', sans-serif !important;
         color: #E2E8F0 !important;
@@ -170,11 +169,11 @@ else:
         except Exception as error:
             st.error(f"❌ Error compiling financial data arrays for {target_stock}: {str(error)}")
             
-    # Scenario B: Global Sweep Radar Active Execution (FIXED COMPREHENSIVE VIEW)
+    # Scenario B: Global Sweep Radar Active Execution (FIXED SELECTOR VIEW)
     else:
         st.write("### 📋 MULTI-ASSET RADAR MONITORING MATRIX")
         
-        # Establishing reliable stock base data structures for rendering
+        # Core structured dataset mapping
         raw_market_data = [
             {"Symbol": "TCS.NS", "Price (₹)": 2200.5, "M-Cap (Cr)": 796160.16, "ROCE %": 47.74, "Debt/Equity": 10.21, "Free-Float (Cr)": 42144.74, "Churn %": 74.14},
             {"Symbol": "HDFCBANK.NS", "Price (₹)": 817.95, "M-Cap (Cr)": 1259741.7, "ROCE %": 13.82, "Debt/Equity": 0.05, "Free-Float (Cr)": 89450.00, "Churn %": 12.30},
@@ -192,13 +191,21 @@ else:
         else:
             display_df = df[["Symbol", "Price (₹)", "M-Cap (Cr)"]]
             
+        # Displaying the clean static data matrix
         st.dataframe(display_df, use_container_width=True)
         
         st.markdown("---")
-        st.write("### 🤖 STRATEGIC SWARM VECTOR DIAGNOSTICS")
         
-        # Trigger agents sequentially without hanging the container loop
-        for stock_record in raw_market_data:
-            st.markdown(f"**Asset Processing Signal:** `{stock_record['Symbol']}`")
-            agents.run_ai_cognitive_agent(stock_record, selected_mode)
-            
+        # 🎯 FIX: Adding an isolated dynamic asset inspection tool instead of mass rendering loops
+        st.write("### 🤖 UNIFIED COGNITIVE INTELLIGENCE PANEL")
+        
+        stock_options = [record["Symbol"] for record in raw_market_data]
+        selected_target = st.selectbox("Select Asset to Audit and Stream Live Groq Stance:", stock_options)
+        
+        # Fetching the dedicated single selected record mapping from dataset
+        selected_record = next(item for item in raw_market_data if item["Symbol"] == selected_target)
+        
+        # Triggering the dynamic cognitive audit agent explicitly for the user's selected asset structure
+        st.info(f"⚡ Firing Multi-Agent Swarm Intelligence Vectors for target matrix: **{selected_target}**")
+        agents.run_ai_cognitive_agent(selected_record, selected_mode)
+        
